@@ -81,7 +81,7 @@ return table(columns:7,table.cell(colspan: 7, align:center)[学籍番号],[#hide
 
 #let unmarked-sheet = marked-sheet(dummy:("","","","","","",""))
 
-#let kuran(numbering-style:def-numbering-style, label:none, answer:none, point:none, fonts:fonts) = {
+#let kuran(numbering-style:def-numbering-style, label:none, answer:none, point:none, fonts:fonts, pattern:0) = {
   counter("kuran").step()
   context{
     let num = counter("kuran").get().at(0)
@@ -90,7 +90,7 @@ return table(columns:7,table.cell(colspan: 7, align:center)[学籍番号],[#hide
     if answer != none {counter("kuran-"+str(num)).update(answer)}
     if label !=none {counter("kuran-"+label+"-tx").update(num)}
     if point != none {counter("kuran-"+str(num)+"point").update(point)}
-    
+    counter("kuran-"+str(num)+"pattern").update(pattern)
   }
 }
 

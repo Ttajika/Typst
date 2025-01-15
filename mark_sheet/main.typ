@@ -79,12 +79,20 @@ arc((3mm, 0), start: 0deg, stop: 30deg, radius: 3mm)})
 #mondai[
 次の計算をしなさい．
 $
-sum_(x=1)^oo 1/x^2 = pi^#kuran(answer:2,point:0)/#kuran(answer:6, point:8)
+sum_(x=1)^oo 1/x^2 = pi^#kuran(answer:2,point:0, pattern:2)/#kuran(answer:6, point:8,pattern:8)
 $
-
+//セット採点の場合はpatternを最後以外は2, 最後を8にする．得点は最後以外を0にする
 
 
 ]
+
+#mondai[
+1〜6までで偶数を３つ選びなさい
+
+#kuran(answer:2,pattern:1, point:2) #kuran(answer:4, pattern:1, point:2), #kuran(answer:6, pattern:9, point:2)
+//順不同の場合はpatternを最後以外を1, 最後を9にする
+]
+
 
 //本文はここまで
 
@@ -94,16 +102,22 @@ $
 #let total-points = 0
 #let answers = ()
 #let points = ()
+#let patterns = ()
 #for i in range(N) {
   answers.push(counter("kuran-"+str(i+1)).get().at(0))
   points.push(counter("kuran-"+str(i+1)+"point").get().at(0))
   total-points += counter("kuran-"+str(i+1)+"point").get().at(0)
+  patterns.push(counter("kuran-"+str(i+1)+"pattern").get().at(0))
+
 }
 
 //解答マークシート
-#marked-sheet(answers:answers, texts:[正答マークシート])
+#marked-sheet(answers:answers, texts:[*正答マークシート*])
 //配点マークシート
-#marked-sheet(answers:points, dummy:("0")*7,texts:[ 配点マークシート  満点: #total-points ])
+#marked-sheet(answers:points, dummy:("0")*7,texts:[ *配点マークシート*  満点: #total-points ])
+//採点パターン
+#marked-sheet(answers:patterns, dummy:("1")*7,texts:[ *採点パターンマークシート* ])
+
 
 ]
 #unmarked-sheet
