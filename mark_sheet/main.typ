@@ -1,78 +1,77 @@
 #import "lib/functions.typ":*
-
-
-#let N = 50
-#let choice = 10
-
-#let mark = {
-  for i in range(choice){
-  box[#ellipse(width: 18pt, height: 18pt)[#align(center+horizon,)[#i]] ]+h(10pt)  
-}
-}
-
-
-#let question = ()
+#set page("a4", margin:1cm)
+#set text(size:12pt,font:("Noto Serif", "Harano Aji Mincho"))
+#show strong: set text(font:("Noto Sans", "Harano Aji Gothic"),weight: 300)
+#show heading: set text(font:("Noto Sans", "Harano Aji Gothic"),weight: 500)
+#show math.equation: set text(font:("New computer modern math", "Harano Aji Mincho"))
+#let N = 46
 #for i in range(N) {
-question.push("問"+str(i+1)) 
-question.push(mark)
+  counter("kuran-"+str(i+1)).update(1000)
 }
 
-#let filling(answer, i) = {
-    if answer == i {
-      return black}
-    else {return white}
+#let mondai(body) = {
+  counter("mondai").step()
+  context[#strong[問題 #numbering("1.",counter("mondai").get().at(0))]
+
+  #body 
+  ]
+}
+#let sentaku = "このとき，最も適当なものを次の１〜４の中から選べ．"
+
+#let choice(candidate) = {
+  let n = candidate.len()
+  let col = (14pt, 1fr)*n
+  let narray = ()
+  for i in range(n) {
+    narray.push(box[#ellipse(width: 10pt, height: 10pt, stroke:.5pt)[#align(center+horizon,)[#text(size:8pt)[#numbering("1",i+1)]]]])
+    narray.push(candidate.at(i))
   }
+  [#box(stroke:1pt,inset:10pt,grid(columns:col,..narray))]}
 
-#let answers = ()//(0,2,6,7,2,2,8,1,9,3)
+//#counter("showanswer").update(1) //解答を見せる
 
-#let mark_ans(answer) = {
-  for i in range(choice){
-    box[#ellipse(width: 10pt, height: 10pt, fill: filling(answer, i), stroke:.5pt)[#align(center+horizon,)[#i]] ]+h(10pt)  
-  }
+//本文はここに書く
+
+= [科目名]:期末試験
+
+#mondai[
+#lorem(20)
+#sentaku 
+
+#kuran(answer:3,point:2)#choice(("アレイ", "牛", "イオン", "たぬき"))
+]
+
+#mondai[
+#lorem(20)
+#sentaku 
+
+#kuran(answer:1,point:3)#choice(("アレイ", "牛", "イオン", "たぬき"))
+]
+
+
+#mondai[
+次の計算をしなさい．
+$
+sum_(x=1)^oo 1/x^2 = pi^#kuran(answer:2,point:0)/#kuran(answer:6, point:8)
+$
+
+]
+
+//本文はここまで
+#context[
+#let total-points = 0
+#let answers = ()
+#let points = ()
+#for i in range(N) {
+  answers.push(counter("kuran-"+str(i+1)).get().at(0))
+  points.push(counter("kuran-"+str(i+1)+"point").get().at(0))
+  total-points += counter("kuran-"+str(i+1)+"point").get().at(0)
 }
 
-#let mark_answer(answers, N) = {
-  let n = answers.len()
-  let question = ()
-  for i in range(N) {
-    question.push("問"+str(i+1))
-    question.push(mark_ans( if i < n {answers.at(i)} else {}))
-  }
-  return question
-}
-#let maru = box[#circle(stroke:4pt, radius: 8pt)]
+//解答マークシート
+#marked-sheet(answers:answers, texts:[正答マークシート])
+//配点マークシート
+#marked-sheet(answers:points, texts:[ 配点マークシート  満点: #total-points ])
 
-
-
-#let response = ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "E")
-
-#let dummy = ("A","A","A","A","A","A","A")
-
-#let IDs(dummy) = {
-let IDs = ()
-let num = 7
-let rnum = response.len()
-for i in range(rnum) {
-  for j in range(num){
-    IDs.push(box[#ellipse(width: 10pt, height: 10pt, fill: filling(dummy.at(j), response.at(i)), stroke:.5pt)[#align(center+horizon,)[#response.at(i)]] ])  
-  }  
-}
-return IDs
-}
-
-
-
-
-#let studentID = {
-  table(columns:7,table.cell(colspan: 7, align:center)[学籍番号],[#hide[x]],[],[],[],[],[],[],..IDs(dummy),
-stroke: (x,y) => {if y <= 0 {1pt} else if x == 0 {(left:1pt)} else if x == 6 {(right:1pt)} else  {(left:.5pt, right:.5pt)} 
-if y == response.len()+1 {(bottom:1pt)} 
-if y == 1 {(bottom:0.5pt)}
-}
-)
-}
-
-#set page(paper:"a4",flipped: true, margin:1.5cm, header: [#maru #h(1fr) #maru ], footer: [#maru #h(1fr) #maru ])
-
-#grid( columns:(1cm, auto,auto, 1cm), row-gutter:10pt, column-gutter: 10pt, [],[#studentID #table(align:center,columns:(5cm),[氏名],[#hide[氏名\ 氏名]])], columns[#table(columns:(40pt,auto), ..mark_answer(answers, N))] )
-
+]
+#unmarked-sheet
