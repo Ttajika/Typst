@@ -1,4 +1,6 @@
 #import "lib/functions.typ":*
+#import "@preview/cetz:0.3.1"
+
 #set page("a4", margin:1cm)
 #set text(size:12pt,font:("Noto Serif", "Harano Aji Mincho"))
 #show strong: set text(font:("Noto Sans", "Harano Aji Gothic"),weight: 300)
@@ -31,6 +33,15 @@
 //#counter("showanswer").update(1) //解答を見せる
 
 //本文はここに書く
+マークシートの読み取りにはFormScannerを用いる．
+
+使い方は，例えば以下を参照
+https://harucharuru.hatenablog.com/entry/2020/01/14/182020
+
+Typstの使い方は https://qiita.com/tomoyatajika/items/649884befe95c5f1dcea
+
+
+
 
 = [科目名]:期末試験
 
@@ -45,7 +56,23 @@
 #lorem(20)
 #sentaku 
 
-#kuran(answer:1,point:3)#choice(("アレイ", "牛", "イオン", "たぬき"))
+#kuran(answer:1,point:3)#choice(([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
+
+  #cetz.canvas(length:0.4cm,{
+  import cetz.draw: *
+set-style(
+  stroke: 0.4pt,
+  grid: (
+    stroke: gray + 0.2pt,
+    step: 0.5
+  )
+)
+grid((-1.5, -1.5), (1.5, 1.5))
+line((-1.5, 0), (1.5, 0))
+line((0, -1.5), (0, 1.5))
+circle((0, 0))
+arc((3mm, 0), start: 0deg, stop: 30deg, radius: 3mm)})
+]))
 ]
 
 
@@ -55,9 +82,14 @@ $
 sum_(x=1)^oo 1/x^2 = pi^#kuran(answer:2,point:0)/#kuran(answer:6, point:8)
 $
 
+
+
 ]
 
 //本文はここまで
+
+
+
 #context[
 #let total-points = 0
 #let answers = ()
