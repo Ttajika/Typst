@@ -71,7 +71,7 @@ $
 //解答マークシート
 #marked-sheet(answers:answers, texts:[正答マークシート])
 //配点マークシート
-#marked-sheet(answers:points, texts:[ 配点マークシート  満点: #total-points ])
+#marked-sheet(answers:points, dummy:("0")*7,texts:[ 配点マークシート  満点: #total-points ])
 
 ]
 #unmarked-sheet
