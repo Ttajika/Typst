@@ -1,7 +1,7 @@
 #let choice = 10
 
 
-#let response = ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "E")
+#let response = ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "E", "T")
 
 #let dummy = ("A","A","A","A","A","A","A")
 
@@ -99,7 +99,7 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   context{
     let num = counter("kuran").get().at(0)
     let show-answer = counter("showanswer").get().at(0)
-    kuranbox()[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) #if show-answer == 1 {[:#answer]}]]
+    kuranbox()[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ]]+if show-answer == 1 {text(fill:red)[ #answer ]}
     if answer != none {counter("kuran-"+str(num)).update(answer)}
     if label !=none {counter("kuran-"+label+"-tx").update(num)}
     if point != none {counter("kuran-"+str(num)+"point").update(point)}
