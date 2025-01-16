@@ -92,7 +92,7 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 
 #let a = ("")*7
 
-#let unmarked-sheet = marked-sheet(dummy:("","","","","","",""),texts:[*解答用紙*])
+#let unmarked-sheet(N:60) = marked-sheet(dummy:("","","","","","",""),texts:[*解答用紙*], N:N)
 
 #let kuran(numbering-style:def-numbering-style, label:none, answer:none, point:none, font:mark-font, pattern:0) = {
   counter("kuran").step()

@@ -6,7 +6,7 @@
 #show strong: set text(font:("Noto Sans", "Harano Aji Gothic"),weight: 500) //強調のフォント設定
 #show heading: set text(font:("Noto Sans", "Harano Aji Gothic"),weight: 500) //見出しのフォント設定
 #show math.equation: set text(font:("New computer modern math", "Harano Aji Mincho")) //数式フォント設定
-#let N = 60 //問題数
+#let N = 75 //問題数
 #for i in range(N) {
   counter("kuran-"+str(i+1)).update(1000)
 }
@@ -150,4 +150,4 @@ $
 
 
 ]
-#unmarked-sheet
+#unmarked-sheet(N:N)
