@@ -1,7 +1,7 @@
 #let choice = 10
 
 
-#let response = ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "E", "T")
+#let response = ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "E", "T") //学籍番号用
 
 #let dummy = ("A","A","A","A","A","A","A")
 
@@ -88,7 +88,7 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 
 }
 
-#let kuranbox(body, x:0) = box(stroke: (thickness:1pt,dash: if x ==0{"solid" }else {"dash"}),width:1.5em, height: 1.2em, )[#align(center+horizon)[#body]]
+#let kuranbox(body, x:0) = box(stroke: (thickness:1pt,dash: if x == 0 {"solid" } else {"dashed"}),width:1.5em, height: 1.0em, baseline: 10%)[#align(center+horizon)[#body]]
 
 #let a = ("")*7
 
@@ -110,7 +110,121 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 #let refku(numbering-style:def-numbering-style,label, font:mark-font) = {
   context{
   let num = counter("kuran-"+label+"-tx").get().at(0)
-  box(setting_kuran,x:1)[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num)]]
+  kuranbox(x:1)[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num)]]
   }
 }
 
+//設定
+#let project(
+    N:75,
+    body-font:("Noto Serif", "Harano Aji Mincho"),
+    sans-font:("Noto Sans", "Harano Aji Gothic"),
+    math-font:("New computer modern math", "Harano Aji Mincho"),
+    show-answer:false,
+    
+    body
+    ) = {
+    for i in range(N) {
+      counter("kuran-"+str(i+1)).update(1000)
+        }
+    set page("a4", margin:1cm, numbering: "1")
+    set text(size:12pt,font:body-font) //地の文のフォント設定
+    set par(first-line-indent: 1em)
+    show strong: set text(font:sans-font,weight: 500) //強調のフォント設定
+    show heading: set text(font:sans-font,weight: 500) //見出しのフォント設定
+    show math.equation: set text(font:math-font) //数式フォント設定
+    if show-answer {counter("showanswer").update(1)} //解答を見せる
+
+    body
+  
+    context[
+      #let total-points = 0
+      #let answers = ()
+      #let points = ()
+      #let patterns = ()
+      #for i in range(N) {
+        answers.push(counter("kuran-"+str(i+1)).get().at(0))
+        points.push(counter("kuran-"+str(i+1)+"point").get().at(0))
+        total-points += counter("kuran-"+str(i+1)+"point").get().at(0)
+        patterns.push(counter("kuran-"+str(i+1)+"pattern").get().at(0))
+      }
+      //解答マークシート
+      #marked-sheet(answers:answers, texts:[*正答マークシート*], N:N)
+      //配点マークシート
+      #marked-sheet(answers:points, dummy:("0")*7,texts:[ *配点マークシート*  満点: #total-points ], N:N)
+      //採点パターン
+      #marked-sheet(answers:patterns, dummy:("1")*7,texts:[ *採点パターンマークシート* ], N:N)
+      ]
+    unmarked-sheet(N:N)  
+}
+
+
+#let help ={[
+- これはマークシート式試験のテンプレートです
+
+- 以下の特徴があります
+  - 無料で使用可能
+  - 解答番号は自動連番
+  - 自動連番の番号付き下線や空欄を利用できる
+  - 解答や配点，採点パターン認識用マークシートを自動作成
+  - 付属の採点プログラムに読み込ませるだけで採点できる
+  
+- マークシートの読み取りには#link("https://sites.google.com/site/examgrader/formscanner",[FormScanner])を用いる．
+
+  - 使い方は，例えば以下を参照
+    - https://harucharuru.hatenablog.com/entry/2020/01/14/182020
+  - FormScannerで作成したcsvファイルを#link("https://colab.research.google.com/drive/1jRxTq22NM54GMllzE5MNWnxU3uPjYfSh?usp=sharing",[採点プログラム(python製)])で処理する
+
+- FormScannerの設定は以下のようにしています
+  - 閾値は30, 濃度は40, マーカーのサイズは15
+  - 設問名テンプレートQ\#\#\#
+  - 学籍番号の設定は1. 列ごとの設定，設問グループを "ID"に設定；一番初めにやってください
+  - 問は1. 行ごとの設定，設問グループはなんでもOK
+- 採点プログラムは以下のものが使えます．  
+  - https://colab.research.google.com/drive/1jRxTq22NM54GMllzE5MNWnxU3uPjYfSh?usp=sharing
+
+  - 上記採点プログラムを用いる場合は配点シート，正答シート，採点パターンシート全てをスキャンしてください．
+
+- Typstの使い方
+  - 公式ドキュメント(和訳)：https://typst-jp.github.io/docs/
+  - チュートリアル: https://qiita.com/tomoyatajika/items/649884befe95c5f1dcea
+  
+
+]}
+
+#let Q_underline(label:none,numbering-style:"ア",body) = {
+  counter("toi").step()
+  context{
+  text(size:0.5em)[(#numbering(numbering-style,counter("toi").get().at(0)))]+underline(body)
+  if label != none {counter("toi"+label).update(counter("toi").get().at(0))}
+}
+}
+#let Q_box(label:none,numbering-style:"ア") = {
+  counter("toi").step()
+  context[
+  #box(height:12pt,width:15pt, stroke:1pt,baseline: 1pt)[#align(center+horizon)[#text(size:0.8em)[#numbering(numbering-style,counter("toi").get().at(0))]]]
+  #if label != none {counter("toi"+label).update(counter("toi").get().at(0))}
+  ]
+}
+
+#let ref_Q(label,numbering-style:"ア") = {context[#numbering(numbering-style,counter("toi"+label).get().at(0))]}
+
+#let choice(candidate) = {
+  let n = candidate.len()
+  let col = (14pt, 1fr)*n
+  let narray = ()
+  for i in range(n) {
+    narray.push(box[#ellipse(width: 10pt, height: 10pt, stroke:.5pt)[#align(center+horizon,)[#text(size:8pt)[#numbering("1",i+1)]]]])
+    narray.push(candidate.at(i))
+  }
+  [#box(stroke:1pt,inset:10pt,grid(columns:col,..narray))]}
+
+
+
+
+#let mondai(body) = {
+  counter("mondai").step()
+  block(width:100%)[#context[#strong[問題 #numbering("1.",counter("mondai").get().at(0))]
+  #body 
+  ]]
+}
