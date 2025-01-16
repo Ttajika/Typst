@@ -65,7 +65,7 @@ return IDs
 
 
 #let studentID(dummy, response) = {
-return table(columns:8,[],table.cell(colspan: 7, align:center)[学籍番号],[#hide[x]],[],[],    [],[],[],[],[],..IDs(dummy),
+return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:center+horizon)[学籍番号],[#hide[x]],[],[],    [],[],[],[],[],..IDs(dummy),
     stroke: (x,y) => {
     if x == 0 {(left:0pt)}  
     else if y <= 1 {1pt} else if x == 1 {(left:1pt)} else if x == 7 {(right:1pt)} else  {(left:.5pt, right:.5pt)} 
@@ -76,7 +76,7 @@ return table(columns:8,[],table.cell(colspan: 7, align:center)[学籍番号],[#h
 
 }
 
-#let hanrei = table(columns:(23pt,auto),[],[#mark_ans("", col:white, size:10pt)])
+#let hanrei = table(columns:(23pt,auto),stroke:0pt,[],[#mark_ans("", col:white, size:10pt)])
 
 #let marked-sheet(answers:(), N:60, response:response, dummy:dummy, texts:"") = {
 
@@ -84,7 +84,7 @@ return table(columns:8,[],table.cell(colspan: 7, align:center)[学籍番号],[#h
   
   grid( columns:(.5cm, auto,auto, auto,auto, .5cm), row-gutter:0pt, column-gutter: 10pt,
   [],[],[#hanrei],[#h(5.8pt)#box(hanrei)],[#h(5.9pt)#box(hanrei)],[],
-  [],[#studentID(dummy,response)  #table(align:center, stroke: (x,y)=>{ if x>= 1 {1pt}}, columns:(18pt,80*1.75pt),[],[氏名],[],[#hide[氏名\ 氏名]])], grid.cell(colspan:3,columns(3, gutter:0pt)[#table(columns:(23pt,auto), align:center,..mark_answer(answers, N))] ))
+  [],[#studentID(dummy,response)  #table(align:center+horizon, stroke: (x,y)=>{ if x>= 1 {1pt}}, columns:(18pt,80*1.75pt),[],[氏名],[],[#hide[氏名\ 氏名]])], grid.cell(colspan:3,columns(3, gutter:0pt)[#table(columns:(23pt,auto), align:center+horizon,..mark_answer(answers, N))] ))
 
 }
 

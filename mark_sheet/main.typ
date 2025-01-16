@@ -2,11 +2,11 @@
 #import "@preview/cetz:0.3.1"
 
 #set page("a4", margin:1cm, numbering: "1")
-#set text(size:12pt,font:("Noto Serif", "Harano Aji Mincho"))
-#show strong: set text(font:("Noto Sans", "Harano Aji Gothic"),weight: 300)
-#show heading: set text(font:("Noto Sans", "Harano Aji Gothic"),weight: 500)
-#show math.equation: set text(font:("New computer modern math", "Harano Aji Mincho"))
-#let N = 60
+#set text(size:12pt,font:("Noto Serif", "Harano Aji Mincho")) //地の文のフォント設定
+#show strong: set text(font:("Noto Sans", "Harano Aji Gothic"),weight: 500) //強調のフォント設定
+#show heading: set text(font:("Noto Sans", "Harano Aji Gothic"),weight: 500) //見出しのフォント設定
+#show math.equation: set text(font:("New computer modern math", "Harano Aji Mincho")) //数式フォント設定
+#let N = 60 //問題数
 #for i in range(N) {
   counter("kuran-"+str(i+1)).update(1000)
 }
@@ -18,7 +18,23 @@
   #body 
   ]
 }
-#let sentaku = "このとき，最も適当なものを次の１〜４の中から選べ．"
+
+#let Q_underline(label:none,numbering-style:"ア",body) = {
+  counter("toi").step()
+  context{
+  text(size:0.5em)[(#numbering(numbering-style,counter("toi").get().at(0)))]+underline(body)
+  if label != none {counter("toi"+label).update(counter("toi").get().at(0))}
+}
+}
+#let Q_box(label:none,numbering-style:"ア") = {
+  counter("toi").step()
+  context[
+  #box(height:12pt,width:15pt, stroke:1pt,baseline: 1pt)[#align(center+horizon)[#text(size:0.8em)[#numbering(numbering-style,counter("toi").get().at(0))]]]
+  #if label != none {counter("toi"+label).update(counter("toi").get().at(0))}
+  ]
+}
+
+#let ref_Q(label,numbering-style:"ア") = {context[#numbering(numbering-style,counter("toi"+label).get().at(0))]}
 
 #let choice(candidate) = {
   let n = candidate.len()
@@ -55,6 +71,7 @@ Typstの使い方は https://qiita.com/tomoyatajika/items/649884befe95c5f1dcea
 
 
 = [科目名]:期末試験
+#let sentaku = "このとき，最も適当なものを次の１〜４の中から選べ．"
 
 #mondai[
 #lorem(20)
@@ -64,8 +81,8 @@ Typstの使い方は https://qiita.com/tomoyatajika/items/649884befe95c5f1dcea
 ]
 
 #mondai[
-#lorem(20)
-#sentaku 
+#lorem(20) #Q_underline(label:"y")[あいうえお]という．そうすると#Q_box(label:"x")は日本国憲法を発布した．
+下線部#ref_Q("y")と空欄#ref_Q("x")について，#sentaku 
 
 #kuran(answer:1,point:3)#choice(([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
 
