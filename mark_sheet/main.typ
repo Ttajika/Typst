@@ -6,7 +6,7 @@
 #show strong: set text(font:("Noto Sans", "Harano Aji Gothic"),weight: 300)
 #show heading: set text(font:("Noto Sans", "Harano Aji Gothic"),weight: 500)
 #show math.equation: set text(font:("New computer modern math", "Harano Aji Mincho"))
-#let N = 46
+#let N = 60
 #for i in range(N) {
   counter("kuran-"+str(i+1)).update(1000)
 }
@@ -98,13 +98,15 @@ $
 ]
 
 #mondai[
-1〜6までで偶数を３つ選びなさい
+1〜6までの数字の中から偶数を３つ選びなさい
 
 #kuran(answer:2,pattern:1, point:2)#kuran(answer:4, pattern:1, point:2)#kuran(answer:6, pattern:9, point:2)
 //順不同の場合はpatternを最後以外を1, 最後を9にする
 ]
 
-
+#mondai[
+  #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)#kuran(answer:3,point:0,pattern:2)#kuran(answer:9,point:8, pattern:8)
+]
 //本文はここまで
 
 
@@ -123,11 +125,11 @@ $
 }
 
 //解答マークシート
-#marked-sheet(answers:answers, texts:[*正答マークシート*])
+#marked-sheet(answers:answers, texts:[*正答マークシート*], N:N)
 //配点マークシート
-#marked-sheet(answers:points, dummy:("0")*7,texts:[ *配点マークシート*  満点: #total-points ])
+#marked-sheet(answers:points, dummy:("0")*7,texts:[ *配点マークシート*  満点: #total-points ], N:N)
 //採点パターン
-#marked-sheet(answers:patterns, dummy:("1")*7,texts:[ *採点パターンマークシート* ])
+#marked-sheet(answers:patterns, dummy:("1")*7,texts:[ *採点パターンマークシート* ], N:N)
 
 
 ]
