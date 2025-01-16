@@ -24,7 +24,7 @@
 
 #let mark_ans(answer) = {
   for i in range(choice){
-    box[#ellipse(width: 10pt, height: 10pt, fill: filling(answer, i), stroke:.5pt)[#align(center+horizon,)[#text(size:8pt)[#i]]] ]+h(10pt)  
+    box[#ellipse(width: 10pt, height: 10pt, fill: filling(answer, i), stroke:.5pt)[#align(center+horizon,)[#text(size:8pt, fill: if answer == i {black} else {black})[#i]]] ]+h(10pt)  
   }
 }
 
@@ -49,7 +49,7 @@ let num = 7
 let rnum = response.len()
 for i in range(rnum) {
   for j in range(num){
-    IDs.push(box[#ellipse(width: 10pt, height: 10pt, fill: filling(dummy.at(j), response.at(i)), stroke:.5pt)[#align(center+horizon,)[#text(size:8pt,response.at(i))]] ])  
+    IDs.push(box[#ellipse(width: 10pt, height: 10pt, fill: filling(dummy.at(j), response.at(i)), stroke:.5pt)[#align(center+horizon,)[#text(size:8pt,fill: if dummy.at(j) == response.at(i) {black} else {black},response.at(i))]] ])  
   }  
 }
 return IDs

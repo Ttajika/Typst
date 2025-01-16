@@ -1,7 +1,7 @@
 #import "lib/functions.typ":*
 #import "@preview/cetz:0.3.1"
 
-#set page("a4", margin:1cm)
+#set page("a4", margin:1cm, numbering: "1")
 #set text(size:12pt,font:("Noto Serif", "Harano Aji Mincho"))
 #show strong: set text(font:("Noto Sans", "Harano Aji Gothic"),weight: 300)
 #show heading: set text(font:("Noto Sans", "Harano Aji Gothic"),weight: 500)
@@ -33,10 +33,21 @@
 //#counter("showanswer").update(1) //解答を見せる
 
 //本文はここに書く
-マークシートの読み取りにはFormScannerを用いる．
+
+マークシートの読み取りには#link("https://sites.google.com/site/examgrader/formscanner",[FormScanner])を用いる．
 
 使い方は，例えば以下を参照
 https://harucharuru.hatenablog.com/entry/2020/01/14/182020
+
+FormScannerの設定は以下のようにしています
+
+- 閾値は30, 濃度は40, マーカーのサイズは15
+- 設問名テンプレートQ\#\#\#
+- 学籍番号の設定は1. 列ごとの設定，設問グループを "ID"に設定；一番初めにやってください
+- 問は1. 行ごとの設定，設問グループはなんでもOK
+- 採点プログラムは以下のものが使えます．
+
+  https://colab.research.google.com/drive/1jRxTq22NM54GMllzE5MNWnxU3uPjYfSh?usp=sharing
 
 Typstの使い方は https://qiita.com/tomoyatajika/items/649884befe95c5f1dcea
 
@@ -89,7 +100,7 @@ $
 #mondai[
 1〜6までで偶数を３つ選びなさい
 
-#kuran(answer:2,pattern:1, point:2) #kuran(answer:4, pattern:1, point:2), #kuran(answer:6, pattern:9, point:2)
+#kuran(answer:2,pattern:1, point:2)#kuran(answer:4, pattern:1, point:2)#kuran(answer:6, pattern:9, point:2)
 //順不同の場合はpatternを最後以外を1, 最後を9にする
 ]
 
