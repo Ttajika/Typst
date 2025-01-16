@@ -5,11 +5,7 @@
 
 #let dummy = ("A","A","A","A","A","A","A")
 
-#let mark = {
-  for i in range(choice){
-  box[#ellipse(width: 18pt, height: 18pt)[#align(center+horizon,)[#i]] ]+h(10pt)  
-}
-}
+
 
 #let def-numbering-style = "1"
 
@@ -27,18 +23,18 @@
   }
 
 
-#let mark_ans(answer, col:black, size:mark-size) = {
+#let mark_ans(answer, col:black, size:mark-size,choice:choice) = {
   for i in range(choice){
     box[#ellipse(width: mark-widhth, height: mark-height, fill: filling(answer, i), stroke:.5pt+col)[#align(center+horizon,)[#text(size:size, fill: if answer == i {black} else {black})[#i]]] ]+h(5pt)  
   }
 }
 
-#let mark_answer(answers, N, numbering-style:def-numbering-style) = {
+#let mark_answer(answers, N, numbering-style:def-numbering-style,choice:choice) = {
   let n = answers.len()
   let question = ()
   for i in range(N) {
     question.push(text(font:mark-font, size:10pt, weight:mark-weight)[#numbering(numbering-style,i+1)])
-    question.push(mark_ans( if i < n {answers.at(i)} else {}))
+    question.push(mark_ans( if i < n {answers.at(i)} else {},choice:choice))
   }
   return question
 }
@@ -48,7 +44,7 @@
 
 
 
-#let IDs(dummy) = {
+#let IDs(dummy,response) = {
 let IDs = ()
 let num = 7
 let rnum = response.len()
@@ -65,7 +61,7 @@ return IDs
 
 
 #let studentID(dummy, response) = {
-return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:center+horizon)[学籍番号],[#hide[x]],[],[],    [],[],[],[],[],..IDs(dummy),
+return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:center+horizon)[学籍番号],[#hide[x]],[],[],    [],[],[],[],[],..IDs(dummy,response),
     stroke: (x,y) => {
     if x == 0 {(left:0pt)}  
     else if y <= 1 {1pt} else if x == 1 {(left:1pt)} else if x == 7 {(right:1pt)} else  {(left:.5pt, right:.5pt)} 
@@ -78,13 +74,13 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 
 #let hanrei = table(columns:(23pt,auto),stroke:0pt,[],[#mark_ans("", col:white, size:10pt)])
 
-#let marked-sheet(answers:(), N:60, response:response, dummy:dummy, texts:"") = {
+#let marked-sheet(answers:(), N:60, response:response, dummy:dummy, texts:"",choice:choice) = {
 
   set page(paper:"a4",flipped: true, margin:(left:0.5cm,right:0.5cm, top:1cm, bottom:1cm), header: [#maru #h(1fr) #text(size:15pt)[#texts] #h(1fr) #maru ], footer: [#maru #h(1fr) #maru ])
   
   grid( columns:(.5cm, auto,auto, auto,auto, .5cm), row-gutter:0pt, column-gutter: 10pt,
   [],[],[#hanrei],[#h(5.8pt)#box(hanrei)],[#h(5.9pt)#box(hanrei)],[],
-  [],[#studentID(dummy,response)  #table(align:center+horizon, stroke: (x,y)=>{ if x>= 1 {1pt}}, columns:(18pt,80*1.75pt),[],[氏名],[],[#hide[氏名\ 氏名]])], grid.cell(colspan:3,columns(3, gutter:0pt)[#table(columns:(23pt,auto), align:center+horizon,..mark_answer(answers, N))] ))
+  [],[#studentID(dummy,response)  #table(align:center+horizon, stroke: (x,y)=>{ if x>= 1 {1pt}}, columns:(18pt,80*1.75pt),[],[氏名],[],[#hide[氏名\ 氏名]])], grid.cell(colspan:3,columns(3, gutter:0pt)[#table(columns:(23pt,auto), align:center+horizon,..mark_answer(answers, N,choice:choice))] ))
 
 }
 
@@ -92,7 +88,6 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 
 #let a = ("")*7
 
-#let unmarked-sheet(N:60) = marked-sheet(dummy:("","","","","","",""),texts:[*解答用紙*], N:N)
 
 #let kuran(numbering-style:def-numbering-style, label:none, answer:none, point:none, font:mark-font, pattern:0) = {
   counter("kuran").step()
@@ -121,6 +116,7 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
     sans-font:("Noto Sans", "Harano Aji Gothic"),
     math-font:("New computer modern math", "Harano Aji Mincho"),
     show-answer:false,
+    response:response,
     
     body
     ) = {
@@ -149,13 +145,13 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
         patterns.push(counter("kuran-"+str(i+1)+"pattern").get().at(0))
       }
       //解答マークシート
-      #marked-sheet(answers:answers, texts:[*正答マークシート*], N:N)
+      #marked-sheet(answers:answers, response:response, texts:[*正答マークシート*], N:N)
       //配点マークシート
-      #marked-sheet(answers:points, dummy:("0")*7,texts:[ *配点マークシート*  満点: #total-points ], N:N)
+      #marked-sheet(answers:points, response:response,dummy:("0")*7,texts:[ *配点マークシート*  満点: #total-points ], N:N)
       //採点パターン
-      #marked-sheet(answers:patterns, dummy:("1")*7,texts:[ *採点パターンマークシート* ], N:N)
+      #marked-sheet(answers:patterns, response:response, dummy:("1")*7,texts:[ *採点パターンマークシート* ], N:N)
       ]
-    unmarked-sheet(N:N)  
+      marked-sheet(dummy:("","","","","","",""),texts:[*解答用紙*], response:response, N:N)
 }
 
 
@@ -168,6 +164,7 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   - 自動連番の番号付き下線や空欄を利用できる
   - 解答や配点，採点パターン認識用マークシートを自動作成
   - 付属の採点プログラムに読み込ませるだけで採点できる
+  - 総得点も自動計算できるので，満点を容易に計算可能
   
 - マークシートの読み取りには#link("https://sites.google.com/site/examgrader/formscanner",[FormScanner])を用いる．
 

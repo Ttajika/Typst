@@ -9,7 +9,8 @@
   body-font:("Noto Serif", "Harano Aji Mincho"), //本文フォント
   sans-font:("Noto Sans", "Harano Aji Gothic"), //強調フォント
   math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
-  show-answer:false //これをtrueにすると解答を問題に出すことができる．
+  show-answer:false, //これをtrueにすると解答を問題に出すことができる．
+  response: ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "E", "T") //学籍番号用 
 )
 
 
@@ -18,9 +19,9 @@
 
 //本文はここに書く
 
-#help
+#help //ヘルプ
 
-#pagebreak()
+#pagebreak() //改ページ
 
 //以下は問題のサンプル
 
