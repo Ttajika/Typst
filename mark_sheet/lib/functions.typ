@@ -79,12 +79,12 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   set page(paper:"a4",flipped: true, margin:(left:0.5cm,right:0.5cm, top:1cm, bottom:1cm), header: [#maru #h(1fr) #text(size:15pt)[#texts] #h(1fr) #maru ], footer: [#maru #h(1fr) #maru ])
   
   grid( columns:(.5cm, auto,auto, auto,auto, .5cm), row-gutter:0pt, column-gutter: 10pt,
-  [],[],[#hanrei],[#h(5.8pt)#box(hanrei)],[#h(5.9pt)#box(hanrei)],[],
+  [],[],[#hanrei],[#if N>25{h(5.8pt)+box(hanrei)}],[#if N>50{h(5.9pt)+box(hanrei)}],[],
   [],[#studentID(dummy,response)  #table(align:center+horizon, stroke: (x,y)=>{ if x>= 1 {1pt}}, columns:(18pt,80*1.75pt),[],[氏名],[],[#hide[氏名\ 氏名]])], grid.cell(colspan:3,columns(3, gutter:0pt)[#table(columns:(23pt,auto), align:center+horizon,..mark_answer(answers, N,choice:choice))] ))
 
 }
 
-#let kuranbox(body, x:0) = box(stroke: (thickness:1pt,dash: if x == 0 {"solid" } else {"dashed"}),width:1.5em, height: 1.0em, baseline: 10%)[#align(center+horizon)[#body]]
+#let kuranbox(body, x:0) = box(stroke: (thickness:1pt,dash: if x == 0 {"solid" } else {"dotted"}),width:1.5em, height: 1.0em, baseline: 10%)[#align(center+horizon)[#body]]
 
 #let a = ("")*7
 
@@ -193,19 +193,31 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 #let Q_underline(label:none,numbering-style:"ア",body) = {
   counter("toi").step()
   context{
-  text(size:0.5em)[(#numbering(numbering-style,counter("toi").get().at(0)))]+underline(body)
-  if label != none {counter("toi"+label).update(counter("toi").get().at(0))}
+  text(size:0.7em)[(#numbering(numbering-style,counter("toi").get().at(0)))]+underline(body)
+  if label != none {
+    counter("toi"+label).update(counter("toi").get().at(0))
+    counter("toi"+label+"kind").update(1)
+    }
 }
 }
 #let Q_box(label:none,numbering-style:"ア") = {
   counter("toi").step()
   context[
   #box(height:12pt,width:15pt, stroke:1pt,baseline: 1pt)[#align(center+horizon)[#text(size:0.8em)[#numbering(numbering-style,counter("toi").get().at(0))]]]
-  #if label != none {counter("toi"+label).update(counter("toi").get().at(0))}
+  #if label != none {
+      counter("toi"+label).update(counter("toi").get().at(0))
+      counter("toi"+label+"kind").update(2) 
+      }
   ]
 }
 
-#let ref_Q(label,numbering-style:"ア") = {context[#numbering(numbering-style,counter("toi"+label).get().at(0))]}
+#let ref_Q(label,numbering-style:"ア") = {
+  context{
+    let kind = counter("toi"+label+"kind").get().at(0)
+    if kind == 1 {"下線部"} else if kind == 2 {"空欄"}
+    numbering(numbering-style,counter("toi"+label).get().at(0))
+    } 
+    }
 
 #let choice(candidate) = {
   let n = candidate.len()
@@ -225,4 +237,56 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   block(width:100%)[#context[#strong[問題 #numbering("1.",counter("mondai").get().at(0))]
   #body 
   ]]
+}
+
+
+#let sample-exam = {
+  [
+  = サンプル問題[科目名]:期末試験
+#let sentaku = "このとき，最も適当なものを次の１〜４の中から選べ．"
+
+#mondai[
+#lorem(10)
+#sentaku 
+//blockで囲う
+#block(kuran(answer:3,point:2)+  choice(("アレイ", "牛", "イオン", "たぬき")))
+]
+引数answerで正答番号，pointで点数を指定する．
+
+#mondai[
+ #Q_underline(label:"y")[あいうえお]という．そうすると#Q_box(label:"x")は日本国憲法を発布した．
+#ref_Q("y")と#ref_Q("x")について，#sentaku 
+
+#kuran(answer:1,point:3)#choice(([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
+#lorem(5)
+]))
+]
+
+
+#mondai[
+次の計算をしなさい．
+$
+sum_(x=1)^oo 1/x^2 = pi^#kuran(answer:2,point:0, pattern:2)/#kuran(answer:6, point:8,pattern:8,label:"z")
+$
+//セット採点の場合は引数patternを最後以外は2, 最後を8にする．得点は最後以外を0にする
+
+ただし #refku("z") には偶数が入る．//番号を再利用するには`#refku`を用いる．ラベルを用いて参照できる．
+
+
+]
+
+#mondai[
+1〜6までの数字の中から偶数を３つ選びなさい
+
+#kuran(answer:2,pattern:1, point:2)#kuran(answer:4, pattern:1, point:2)#kuran(answer:6, pattern:9, point:2)
+//順不同の場合は引数patternを最後以外を1, 最後を9にする．得点は最後のものが１個あたりの点数として採用される．
+]
+
+#mondai[
+  #let newul(label:none,body) = Q_underline(label:none,numbering-style:"A",body)
+  #newul[４つの数字を選んでください]. 空欄や下線部に振る数字・文字は変えることができます．
+  
+  #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)#kuran(answer:3,point:0,pattern:2)#kuran(answer:9,point:8, pattern:8)
+]  
+  ]
 }

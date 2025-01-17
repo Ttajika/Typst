@@ -6,8 +6,8 @@
 
 #show: project.with(
   N:75, //問題数
-  body-font:("Noto Serif", "Harano Aji Mincho"), //本文フォント
-  sans-font:("Noto Sans", "Harano Aji Gothic"), //強調フォント
+  body-font:("New Computer Modern", "Harano Aji Mincho"), //本文フォント
+  sans-font:("New Computer Modern Sans", "Harano Aji Gothic"), //強調フォント
   math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
   show-answer:false, //これをtrueにすると解答を問題に出すことができる．
   response: ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "E", "T") //学籍番号用 
@@ -38,7 +38,7 @@
 
 #mondai[
  #Q_underline(label:"y")[あいうえお]という．そうすると#Q_box(label:"x")は日本国憲法を発布した．
-下線部#ref_Q("y")と空欄#ref_Q("x")について，#sentaku 
+#ref_Q("y")と#ref_Q("x")について，#sentaku 
 
 #kuran(answer:1,point:3)#choice(([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
 #lorem(5)
@@ -51,9 +51,9 @@
 $
 sum_(x=1)^oo 1/x^2 = pi^#kuran(answer:2,point:0, pattern:2)/#kuran(answer:6, point:8,pattern:8,label:"z")
 $
-セット採点の場合は引数patternを最後以外は2, 最後を8にする．得点は最後以外を0にする
+//セット採点の場合は引数patternを最後以外は2, 最後を8にする．得点は最後以外を0にする
 
-ただし #refku("z") には偶数が入る．番号を再利用するには`#refku`を用いる．ラベルを用いて参照できる．
+ただし #refku("z") には偶数が入る．//番号を再利用するには`#refku`を用いる．ラベルを用いて参照できる．
 
 
 ]
@@ -62,7 +62,7 @@ $
 1〜6までの数字の中から偶数を３つ選びなさい
 
 #kuran(answer:2,pattern:1, point:2)#kuran(answer:4, pattern:1, point:2)#kuran(answer:6, pattern:9, point:2)
-順不同の場合は引数patternを最後以外を1, 最後を9にする．得点は最後のものが１個あたりの点数として採用される．
+//順不同の場合は引数patternを最後以外を1, 最後を9にする．得点は最後のものが１個あたりの点数として採用される．
 ]
 
 #mondai[
@@ -71,6 +71,9 @@ $
   
   #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)#kuran(answer:3,point:0,pattern:2)#kuran(answer:9,point:8, pattern:8)
 ]
+
+
+
 //本文はここまで
 
 
