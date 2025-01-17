@@ -117,6 +117,7 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
     math-font:("New computer modern math", "Harano Aji Mincho"),
     mono-font:("Liberation mono", "Harano Aji Gothic"),
     show-answer:false,
+    kaito-title:[*解答用紙*],
     response:response,
     
     body
@@ -153,7 +154,7 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
       //採点パターン
       #marked-sheet(answers:patterns, response:response, dummy:("1")*7,texts:[ *採点パターンマークシート* ], N:N)
       ]
-      marked-sheet(dummy:("","","","","","",""),texts:[*解答用紙*], response:response, N:N)
+      marked-sheet(dummy:("","","","","","",""),texts:[#kaito-title], response:response, N:N)
 }
 
 
