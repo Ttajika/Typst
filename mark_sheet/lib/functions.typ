@@ -192,7 +192,7 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   - 公式ドキュメント(和訳)：https://typst-jp.github.io/docs/
   - チュートリアル: https://qiita.com/tomoyatajika/items/649884befe95c5f1dcea
 
-- テンプレートファイル https://typst.app/project/rI6YUx8eQIafMKP0hRZ1B6
+- このテンプレートファイル https://typst.app/project/rI6YUx8eQIafMKP0hRZ1B6
 
 - 使い方をすべて解説してほしい場合はメールでご依頼ください $->$ #link("mailto:tajika.tomoya@nihon-u.ac.jp")
 
