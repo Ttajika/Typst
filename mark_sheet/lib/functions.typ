@@ -115,6 +115,7 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
     body-font:("Noto Serif", "Harano Aji Mincho"),
     sans-font:("Noto Sans", "Harano Aji Gothic"),
     math-font:("New computer modern math", "Harano Aji Mincho"),
+    mono-font:("Liberation mono", "Harano Aji Gothic"),
     show-answer:false,
     response:response,
     
@@ -129,6 +130,7 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
     show strong: set text(font:sans-font,weight: 500) //強調のフォント設定
     show heading: set text(font:sans-font,weight: 500) //見出しのフォント設定
     show math.equation: set text(font:math-font) //数式フォント設定
+    show raw: set text(font:mono-font)
     if show-answer {counter("showanswer").update(1)} //解答を見せる
 
     body
@@ -234,9 +236,10 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   [#box(stroke:1pt,inset:10pt,grid(columns:col,..narray))]}
 
 
-#let refKN(label:none, mode:none, n:1, numbering-style:def-numbering-style) = {
+#let refKN(label:none, mode:none, n:1, numbering-style:def-numbering-style, at:none) = {
   context{
-  let num = {if mode == none and label == none {n}
+  let num = {if mode == none and label == none and at == none {n}
+              else if at != none {counter("kuran").at(at).at(0)}
               else if label != none {counter("kuran-"+label+"-tx").final().at(0)}
               else if mode == "f" {counter("kuran").final().at(0)}} 
   kuranbox()[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ]] 
@@ -251,9 +254,14 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 
 
 #let sample-exam = {
-  [
-  = サンプル問題[科目名]:期末試験
-#let sentaku = "このとき，最も適当なものを次の１〜４の中から選べ．"
+  [```typst
+#set heading(numbering: "大問1.1")
+
+#heading(numbering:none)[サンプル問題[科目名]:期末試験]
+
+=
+#let sentaku = "最も適当なものを次の１〜４の中から選べ．"
+次の #refKN() から #refKN(at:<second>) まで, 最も適当なものを選択肢欄の１〜４の中から選べ．
 
 #mondai[
 #lorem(10)
@@ -267,11 +275,14 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
  #Q_underline(label:"y")[あいうえお]という．そうすると#Q_box(label:"x")は日本国憲法を発布した．
 #ref_Q("y")と#ref_Q("x")について，#sentaku 
 
-#kuran(answer:1,point:3)#choice(([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
+#block[#kuran(answer:1,point:3)#choice(([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
 #lorem(5)
 ]))
-]
+]]
 
+=  <second>
+
+#context[#refKN(n:counter("kuran").get().at(0)+1) から #refKN(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．]
 
 #mondai[
 次の計算をしなさい．
@@ -280,9 +291,7 @@ sum_(x=1)^oo 1/x^2 = pi^#kuran(answer:2,point:0, pattern:2)/#kuran(answer:6, poi
 $
 //セット採点の場合は引数patternを最後以外は2, 最後を8にする．得点は最後以外を0にする
 
-ただし #refku("z") には偶数が入る．//番号を再利用するには`#refku`を用いる．ラベルを用いて参照できる．
-
-
+ただし #refku("z") には偶数が入る．//番号を再利用し，それとわかるようにするには`#refku`を用いる．ラベルを用いて参照できる．#refKN("z")ならそのまま再利用．
 ]
 
 #mondai[
@@ -292,11 +301,14 @@ $
 //順不同の場合は引数patternを最後以外を1, 最後を9にする．得点は最後のものが１個あたりの点数として採用される．
 ]
 
+
 #mondai[
   #let newul(label:none,body) = Q_underline(label:none,numbering-style:"A",body)
   #newul[４つの数字を選んでください]. 空欄や下線部に振る数字・文字は変えることができます．
   
-  #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)#kuran(answer:3,point:0,pattern:2)#kuran(answer:9,point:8, pattern:8)
-]  
-  ]
+  #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)
+  #kuran(answer:3,point:0,pattern:2)#kuran(answer:9,point:8, pattern:8)
+]
+
+```]
 }

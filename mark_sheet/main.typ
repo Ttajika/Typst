@@ -17,7 +17,6 @@
 
 
 
-
 //本文はここに書く
 
 #help //ヘルプ
@@ -26,9 +25,14 @@
 
 //以下は問題のサンプル
 
-= サンプル問題[科目名]:期末試験
-#let sentaku = "このとき，最も適当なものを次の１〜４の中から選べ．"
-次の #refKN() から #refKN(mode:"f") まで答えなさい．#refKN(label:"z")
+#set heading(numbering: "大問1.1")
+
+
+#heading(numbering:none)[サンプル問題[科目名]:期末試験]
+
+=
+#let sentaku = "最も適当なものを次の１〜４の中から選べ．"
+次の #refKN() から #refKN(at:<second>) まで, 最も適当なものを選択肢欄の１〜４の中から選べ．
 
 #mondai[
 #lorem(10)
@@ -42,10 +46,15 @@
  #Q_underline(label:"y")[あいうえお]という．そうすると#Q_box(label:"x")は日本国憲法を発布した．
 #ref_Q("y")と#ref_Q("x")について，#sentaku 
 
-#kuran(answer:1,point:3)#choice(([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
+#block[#kuran(answer:1,point:3)#choice(([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
 #lorem(5)
 ]))
-]
+]]
+
+=  <second>
+
+#context[#refKN(n:counter("kuran").get().at(0)+1) から #refKN(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．]
+
 
 
 #mondai[
@@ -55,10 +64,11 @@ sum_(x=1)^oo 1/x^2 = pi^#kuran(answer:2,point:0, pattern:2)/#kuran(answer:6, poi
 $
 //セット採点の場合は引数patternを最後以外は2, 最後を8にする．得点は最後以外を0にする
 
-ただし #refku("z") には偶数が入る．//番号を再利用するには`#refku`を用いる．ラベルを用いて参照できる．
+ただし #refku("z") には偶数が入る．//番号を再利用し，それとわかるようにするには`#refku`を用いる．ラベルを用いて参照できる．#refKN("z")ならそのまま再利用．
 
 
 ]
+
 
 #mondai[
 1〜6までの数字の中から偶数を３つ選びなさい
@@ -67,13 +77,20 @@ $
 //順不同の場合は引数patternを最後以外を1, 最後を9にする．得点は最後のものが１個あたりの点数として採用される．
 ]
 
+
 #mondai[
   #let newul(label:none,body) = Q_underline(label:none,numbering-style:"A",body)
-  #newul[４つの数字を選んでください]. 空欄や下線部に振る数字・文字は変えることができます．
+  #newul[２つの二桁の数字を選んでください]. 空欄や下線部に振る数字・文字は変えることができます．
   
-  #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)#kuran(answer:3,point:0,pattern:2)#kuran(answer:9,point:8, pattern:8)
+  #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)
+  #kuran(answer:3,point:0,pattern:2)#kuran(answer:9,point:8, pattern:8)
 ]
 
+
+#pagebreak()
+サンプル問題のTypstコード
+
+#sample-exam
 
 
 //本文はここまで
