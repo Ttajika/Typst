@@ -237,7 +237,7 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 #let refKN(label:none, mode:none, n:1, numbering-style:def-numbering-style) = {
   context{
   let num = {if mode == none and label == none {n}
-              else if label != none {counter("kuran-"+label+"-tx").get().at(0)}
+              else if label != none {counter("kuran-"+label+"-tx").final().at(0)}
               else if mode == "f" {counter("kuran").final().at(0)}} 
   kuranbox()[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ]] 
   }

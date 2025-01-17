@@ -28,7 +28,7 @@
 
 = サンプル問題[科目名]:期末試験
 #let sentaku = "このとき，最も適当なものを次の１〜４の中から選べ．"
-次の #refKN() から #refKN(mode:"f") まで答えなさい．
+次の #refKN() から #refKN(mode:"f") まで答えなさい．#refKN(label:"z")
 
 #mondai[
 #lorem(10)
