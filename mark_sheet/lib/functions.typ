@@ -161,7 +161,9 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 - 以下の特徴があります
   - 無料で使用可能
   - 解答番号は自動連番
+    - ラベルをつけて参照可能
   - 自動連番の番号付き下線や空欄を利用できる
+    - ラベルをつけて参照可能
   - 解答や配点，採点パターン認識用マークシートを自動作成
   - 付属の採点プログラムに読み込ませるだけで採点できる
   - 総得点も自動計算できるので，満点を容易に計算可能
@@ -181,12 +183,14 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   - https://colab.research.google.com/drive/1jRxTq22NM54GMllzE5MNWnxU3uPjYfSh?usp=sharing
 
   - 上記採点プログラムを用いる場合は配点シート，正答シート，採点パターンシート全てをスキャンしてください．
+  - スキャン後生成されたcsvをgoogle colabにアップしてください
+    - アップしたくない場合はローカルでpythonを動かしてください．
 
 - Typstの使い方
   - 公式ドキュメント(和訳)：https://typst-jp.github.io/docs/
   - チュートリアル: https://qiita.com/tomoyatajika/items/649884befe95c5f1dcea
 
-- 使い方をすべて解説してほしい場合はご依頼ください $->$ #link("mailto:tajika.tomoya@nihon-u.ac.jp")
+- 使い方をすべて解説してほしい場合はメールでご依頼ください $->$ #link("mailto:tajika.tomoya@nihon-u.ac.jp")
 
 ]}
 
@@ -230,8 +234,14 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   [#box(stroke:1pt,inset:10pt,grid(columns:col,..narray))]}
 
 
-
-
+#let refKN(label:none, mode:none, n:1, numbering-style:def-numbering-style) = {
+  context{
+  let num = {if mode == none and label == none {n}
+              else if label != none {counter("kuran-"+label+"-tx").get().at(0)}
+              else if mode == "f" {counter("kuran").final().at(0)}} 
+  kuranbox()[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ]] 
+  }
+}
 #let mondai(body) = {
   counter("mondai").step()
   block(width:100%)[#context[#strong[問題 #numbering("1.",counter("mondai").get().at(0))]

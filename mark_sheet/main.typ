@@ -11,6 +11,7 @@
   math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
   show-answer:false, //これをtrueにすると解答を問題に出すことができる．
   response: ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "E", "T") //学籍番号用 
+  //0,1,Aは正答マークシートなどの識別に使うので必要
 )
 
 
@@ -27,6 +28,7 @@
 
 = サンプル問題[科目名]:期末試験
 #let sentaku = "このとき，最も適当なものを次の１〜４の中から選べ．"
+次の #refKN() から #refKN(mode:"f") まで答えなさい．
 
 #mondai[
 #lorem(10)
