@@ -192,6 +192,8 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   - 公式ドキュメント(和訳)：https://typst-jp.github.io/docs/
   - チュートリアル: https://qiita.com/tomoyatajika/items/649884befe95c5f1dcea
 
+- テンプレートファイル https://typst.app/project/rI6YUx8eQIafMKP0hRZ1B6
+
 - 使い方をすべて解説してほしい場合はメールでご依頼ください $->$ #link("mailto:tajika.tomoya@nihon-u.ac.jp")
 
 ]}
@@ -255,6 +257,18 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 
 #let sample-exam = {
   [```typst
+#import "lib/functions.typ":*
+
+#show: project.with(
+  N:75, //問題数
+  body-font:("New Computer Modern", "Harano Aji Mincho"), //本文フォント
+  sans-font:("New Computer Modern Sans", "Harano Aji Gothic"), //強調フォント
+  math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
+  show-answer:false, //これをtrueにすると解答を問題に出すことができる．
+  response: ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "E","D","F","H", "T") //学籍番号用 
+  //0,1,Aは正答マークシートなどの識別に使うので必要
+)
+
 #set heading(numbering: "大問1.1")
 
 #heading(numbering:none)[サンプル問題[科目名]:期末試験]

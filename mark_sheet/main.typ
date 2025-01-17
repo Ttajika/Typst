@@ -10,7 +10,7 @@
   sans-font:("New Computer Modern Sans", "Harano Aji Gothic"), //強調フォント
   math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
   show-answer:false, //これをtrueにすると解答を問題に出すことができる．
-  response: ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "E", "T") //学籍番号用 
+  response: ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "E","D","F","H", "T") //学籍番号用 
   //0,1,Aは正答マークシートなどの識別に使うので必要
 )
 
