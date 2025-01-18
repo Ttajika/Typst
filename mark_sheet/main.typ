@@ -42,7 +42,8 @@
 //blockで囲う
 #block(kuran(answer:3,point:2)+  choice(("アレイ", "牛", "イオン", "たぬき")))
 ]
-引数answerで正答番号，pointで点数を指定する．
+//引数answerで正答番号，pointで点数を指定する．
+//choiceで選択肢欄を作ることができる．
 
 #mondai[
  #Q_underline(label:"y")[あいうえお]という．そうすると#Q_box(label:"x")は日本国憲法を発布した．
@@ -52,6 +53,8 @@
 #lorem(5)
 ]))
 ]]
+//choiceで選択肢欄はrowに数を指定すると行数を変えることができる．
+
 
 =  <second>
 

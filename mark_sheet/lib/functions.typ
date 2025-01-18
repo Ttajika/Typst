@@ -159,6 +159,8 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 
 #let help = {
   [#heading(numbering: none)[コマンドヘルプ]
+作りかけです.
+
 - ```typst #kuran(answer:整数, point:整数, pattern:整数, numbering-style:文字列)```
     - 問番号の欄 #kuran()を作成する．番号は自動連番される．
     - 引数（省略時はデフォルトが採用される）
@@ -285,7 +287,6 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   sans-font:("New Computer Modern Sans", "Harano Aji Gothic"), //強調フォント
   math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
   show-answer:false, //これをtrueにすると解答を問題に出すことができる．
-  //0,1,Aは正答マークシートなどの識別に使うので必要
 )
 
 #set heading(numbering: "大問1.1")
@@ -303,7 +304,8 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 //blockで囲う
 #block(kuran(answer:3,point:2)+  choice(("アレイ", "牛", "イオン", "たぬき")))
 ]
-引数answerで正答番号，pointで点数を指定する．
+//引数answerで正答番号，pointで点数を指定する．
+//choiceで選択肢欄を作ることができる．
 
 #mondai[
  #Q_underline(label:"y")[あいうえお]という．そうすると#Q_box(label:"x")は日本国憲法を発布した．
@@ -313,6 +315,8 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 #lorem(5)
 ]))
 ]]
+//choiceで選択肢欄はrowに数を指定すると行数を変えることができる．
+
 
 =  <second>
 
@@ -349,6 +353,9 @@ $
   #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)
   #kuran(answer:3,point:0,pattern:2)#kuran(answer:9,point:8, pattern:8)
 ]
+
+
+
 
 
 ```]
