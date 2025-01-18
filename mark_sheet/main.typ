@@ -11,8 +11,7 @@
   math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
   show-answer:false, //これをtrueにすると解答を問題に出すことができる．
   kaito-title:[*解答用紙*], //解答用紙のタイトル
-  response: ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "E","D","F","H", "T") //学籍番号用 
-  //0,1,Aは正答マークシートなどの識別に使うので必要
+ 
 )
 
 
@@ -20,7 +19,9 @@
 
 //本文はここに書く
 
-#help //ヘルプ
+#tutorial //ヘルプ
+
+#help
 
 #pagebreak() //改ページ
 
@@ -47,7 +48,7 @@
  #Q_underline(label:"y")[あいうえお]という．そうすると#Q_box(label:"x")は日本国憲法を発布した．
 #ref_Q("y")と#ref_Q("x")について，#sentaku 
 
-#block[#kuran(answer:1,point:3)#choice(([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
+#block[#kuran(answer:1,point:3)#choice(row:2,([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
 #lorem(5)
 ]))
 ]]
@@ -81,6 +82,7 @@ $
 
 #mondai[
   #let newul(label:none,body) = Q_underline(label:none,numbering-style:"A",body)
+  //#letを使って命令を新しく作ることができます
   #newul[２つの二桁の数字を選んでください]. 空欄や下線部に振る数字・文字は変えることができます．
   
   #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)

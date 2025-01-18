@@ -157,8 +157,27 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
       marked-sheet(dummy:("","","","","","",""),texts:[#kaito-title], response:response, N:N)
 }
 
+#let help = {
+  [#heading(numbering: none)[コマンドヘルプ]
+- ```typst #kuran(answer:整数, point:整数, pattern:整数, numbering-style:文字列)```
+    - 問番号の欄 #kuran()を作成する．番号は自動連番される．
+    - 引数（省略時はデフォルトが採用される）
+          - `answer`：正答番号. ここに記入すれば正答マークシートに反映される
+          - `point` ： 配点．ここに記入すれば配点マークシートに反映される
+          - `pattern`：採点パターン．ここに記入すれば採点パターンマークシートに反映される
+          - `numbering-style`:ナンバリングのスタイル．デフォルトは```typst "1" ```
+    - 採点方法について
+      - 採点パターンを省略すれば，通常の採点，つまり欄一つにつき，その配点がなされる
+      - セット採点：複数の欄すべてが正解のときのみ点数を与えるにはセットにする最後の欄のpatternを8に，それ以外を２にする. 配点は最後の欄のものが有効
+      - 順不同採点：複数の欄のうち，順不同採点を行う．部分点はありである．このときには最後の欄のpatternを9に，それ以外を1にする. 配点は最後の欄のものが有効
+  
+  ]
+  counter("kuran").update(0)
+}
 
-#let help ={[
+
+
+#let tutorial ={[
 - これはマークシート式試験のテンプレートです
 
 - 以下の特徴があります
@@ -228,15 +247,15 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
     } 
     }
 
-#let choice(candidate) = {
+#let choice(candidate, row:1, row-size:auto) = {
   let n = candidate.len()
-  let col = (14pt, 1fr)*n
+  let col = (14pt, 1fr)*int(n/row) 
   let narray = ()
   for i in range(n) {
     narray.push(box[#ellipse(width: 10pt, height: 10pt, stroke:.5pt)[#align(center+horizon,)[#text(size:8pt)[#numbering("1",i+1)]]]])
     narray.push(candidate.at(i))
   }
-  [#box(stroke:1pt,inset:10pt,grid(columns:col,..narray))]}
+  [#box(stroke:1pt,inset:1em,grid(align:horizon,columns:col,rows:row-size,row-gutter: 1em,..narray))]}
 
 
 #let refKN(label:none, mode:none, n:1, numbering-style:def-numbering-style, at:none) = {
@@ -266,11 +285,11 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   sans-font:("New Computer Modern Sans", "Harano Aji Gothic"), //強調フォント
   math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
   show-answer:false, //これをtrueにすると解答を問題に出すことができる．
-  response: ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "E","D","F","H", "T") //学籍番号用 
   //0,1,Aは正答マークシートなどの識別に使うので必要
 )
 
 #set heading(numbering: "大問1.1")
+
 
 #heading(numbering:none)[サンプル問題[科目名]:期末試験]
 
@@ -290,7 +309,7 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
  #Q_underline(label:"y")[あいうえお]という．そうすると#Q_box(label:"x")は日本国憲法を発布した．
 #ref_Q("y")と#ref_Q("x")について，#sentaku 
 
-#block[#kuran(answer:1,point:3)#choice(([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
+#block[#kuran(answer:1,point:3)#choice(row:2,([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
 #lorem(5)
 ]))
 ]]
@@ -298,6 +317,8 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 =  <second>
 
 #context[#refKN(n:counter("kuran").get().at(0)+1) から #refKN(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．]
+
+
 
 #mondai[
 次の計算をしなさい．
@@ -307,7 +328,10 @@ $
 //セット採点の場合は引数patternを最後以外は2, 最後を8にする．得点は最後以外を0にする
 
 ただし #refku("z") には偶数が入る．//番号を再利用し，それとわかるようにするには`#refku`を用いる．ラベルを用いて参照できる．#refKN("z")ならそのまま再利用．
+
+
 ]
+
 
 #mondai[
 1〜6までの数字の中から偶数を３つ選びなさい
@@ -319,11 +343,13 @@ $
 
 #mondai[
   #let newul(label:none,body) = Q_underline(label:none,numbering-style:"A",body)
-  #newul[４つの数字を選んでください]. 空欄や下線部に振る数字・文字は変えることができます．
+  //#letを使って命令を新しく作ることができます
+  #newul[２つの二桁の数字を選んでください]. 空欄や下線部に振る数字・文字は変えることができます．
   
   #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)
   #kuran(answer:3,point:0,pattern:2)#kuran(answer:9,point:8, pattern:8)
 ]
+
 
 ```]
 }
