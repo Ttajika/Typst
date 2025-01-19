@@ -84,17 +84,23 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 
 }
 
-#let kuranbox(body, x:0) = box(stroke: (thickness:1pt,dash: if x == 0 {"solid" } else {"dotted"}),width:1.5em, height: 1.0em, baseline: 10%)[#align(center+horizon)[#body]]
+#let kuranbox(body,width:1.5em, height: 1.0em, stroke:"default", x:0) = box(stroke: if stroke == "default"{ (thickness:1pt,dash: if x == 0 {"solid" } else {"dotted"})} else {stroke},width:width, height: height, baseline: 10%)[#align(center+horizon)[#body]]
 
 #let a = ("")*7
 
+
+#let arrange-stroke(pattern) = {
+  if pattern == 0 {1pt+black}
+  else if pattern == 2 or pattern == 8 {(paint:blue, thickness:1pt  )}
+  else if pattern == 1 or pattern == 9 {(paint:green.darken(50%), thickness:1pt  )}
+}
 
 #let kuran(numbering-style:def-numbering-style, label:none, answer:none, point:none, font:mark-font, pattern:0) = {
   counter("kuran").step()
   context{
     let num = counter("kuran").get().at(0)
     let show-answer = counter("showanswer").get().at(0)
-    kuranbox()[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ]]+if show-answer == 1 {text(fill:red)[ #answer ]}
+    kuranbox(stroke:if show-answer == 1 {arrange-stroke(pattern)} else {"default"} )[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ]]+if show-answer == 1 {text(fill:red)[ #answer ]+if pattern == 8 {text(fill:blue, size:0.5em )[set end]} }
     if answer != none {counter("kuran-"+str(num)).update(answer)}
     if label !=none {counter("kuran-"+label+"-tx").update(num)}
     if point != none {counter("kuran-"+str(num)+"point").update(point)}
@@ -102,11 +108,24 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   }
 }
 
-#let refku(numbering-style:def-numbering-style,label, font:mark-font) = {
+#let refku(numbering-style:def-numbering-style,label,  font:mark-font) = {
   context{
   let num = counter("kuran-"+label+"-tx").get().at(0)
   kuranbox(x:1)[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num)]]
   }
+}
+
+#let kaitoran(numbering-style:def-numbering-style,answers, points, show-answer, show-point) = {
+  context{
+  let tab = ()
+  let total-number = counter("kuran").get().at(0)
+  for num in range(total-number){
+  tab.push([#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num+1) ]])
+  tab.push([#if show-answer {answers.at(num)}])
+  tab.push([#if show-point {points.at(num)}])
+}
+table(columns:(40pt,50pt,50pt), align:center+horizon,[問題],[正答],[配点],..tab)
+}
 }
 
 //設定
@@ -118,7 +137,11 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
     mono-font:("Liberation mono", "Harano Aji Gothic"),
     show-answer:false,
     kaito-title:[*解答用紙*],
+    kaito-ichiran:[*正答一覧*],
     response:response,
+    show-answers-table:false,
+    show-points-table:false,
+    
     
     body
     ) = {
@@ -146,6 +169,13 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
         points.push(counter("kuran-"+str(i+1)+"point").get().at(0))
         total-points += counter("kuran-"+str(i+1)+"point").get().at(0)
         patterns.push(counter("kuran-"+str(i+1)+"pattern").get().at(0))
+      }
+
+      #pagebreak() 
+      #if show-answers-table or show-points-table {
+        columns(3)[
+        #heading(numbering: none)[#kaito-ichiran]
+        #kaitoran(numbering-style:def-numbering-style,answers, points, show-answers-table, show-points-table)]
       }
       //解答マークシート
       #marked-sheet(answers:answers, response:response, texts:[*正答マークシート*], N:N)
@@ -260,21 +290,22 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   [#box(stroke:1pt,inset:1em,grid(align:horizon,columns:col,rows:row-size,row-gutter: 1em,..narray))]}
 
 
-#let refKN(label:none, mode:none, n:1, numbering-style:def-numbering-style, at:none) = {
+#let refKN(label:none, mode:none, n:1, numbering-style:def-numbering-style, at:none, stroke:"default", width:1.5em) = {
   context{
   let num = {if mode == none and label == none and at == none {n}
               else if at != none {counter("kuran").at(at).at(0)}
               else if label != none {counter("kuran-"+label+"-tx").final().at(0)}
               else if mode == "f" {counter("kuran").final().at(0)}} 
-  kuranbox()[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ]] 
+  kuranbox(stroke:stroke, width:width)[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ]] 
   }
 }
-#let mondai(body) = {
+#let mondai(body,name:"問題") = {
   counter("mondai").step()
-  block(width:100%)[#context[#strong[問題 #numbering("1.",counter("mondai").get().at(0))]
+  block(width:100%)[#context[#strong[#name #numbering("1.",counter("mondai").get().at(0))]
   #body 
   ]]
 }
+
 
 
 #let sample-exam = {
