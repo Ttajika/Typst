@@ -1,5 +1,6 @@
 #import "lib/functions.typ":*
 #import "@preview/cetz:0.3.1"
+#import "@preview/rexllent:0.2.3": xlsx-parser
 
 
 
@@ -11,6 +12,7 @@
   math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
   show-answer:false, //これをtrueにすると解答を問題に出すことができる．
   kaito-title:[*解答用紙*], //解答用紙のタイトル
+  show-answers-table:true
  
 )
 
@@ -19,11 +21,9 @@
 
 //本文はここに書く
 
-#tutorial //ヘルプ
 
-#help
 
-#pagebreak() //改ページ
+
 
 //以下は問題のサンプル
 

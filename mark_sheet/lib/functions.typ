@@ -115,16 +115,23 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   }
 }
 
-#let kaitoran(numbering-style:def-numbering-style,answers, points, show-answer, show-point) = {
+#let kaitoran(numbering-style:def-numbering-style,answers, points, patterns, show-answer, show-point, total-points) = {
   context{
+  let pattern-search-s = () //順不同 or セット採点始まり
+  let pattern-search-m = ()
+  let pattern-search-l = () //順不同 or セット採点終わり
   let tab = ()
   let total-number = counter("kuran").get().at(0)
   for num in range(total-number){
   tab.push([#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num+1) ]])
   tab.push([#if show-answer {answers.at(num)}])
-  tab.push([#if show-point {points.at(num)}])
+  tab.push([#if show-point {if patterns.at(num) != 2 {[#points.at(num)]}+ if  patterns.at(num) == 9 {h(1fr)+text(0.5em)[(順不同)]} else if patterns.at(num) == 8 {text(0.5em)[#h(1fr) (セット)]}}])
+  if num > 0 and (patterns.at(num)*patterns.at(num -1 ) == 1 or patterns.at(num) * patterns.at(num -1) == 4) {pattern-search-m.push(num)}
+  else  if patterns.at(num) == 1 or patterns.at(num) == 2 {pattern-search-s.push(num)}
+  if patterns.at(num) == 8 or patterns.at(num) == 9 {pattern-search-l.push(num)}
+  
 }
-table(columns:(40pt,50pt,50pt), align:center+horizon,[問題],[正答],[配点],..tab)
+table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.contains(y -1 ) {( left:1pt, right:1pt)} else if x == 2 and pattern-search-s.contains(y - 1) {(top:1pt , left:1pt, right:1pt)} else if x == 2 and pattern-search-l.contains(y -1 ) {(left:1pt, right:1pt, bottom:1pt)}  else {1pt}}, align:horizon,[問題],[正答],[配点],..tab,[計],[],[#total-points])
 }
 }
 
@@ -140,7 +147,7 @@ table(columns:(40pt,50pt,50pt), align:center+horizon,[問題],[正答],[配点],
     kaito-ichiran:[*正答一覧*],
     response:response,
     show-answers-table:false,
-    show-points-table:false,
+    show-points-table:true,
     
     
     body
@@ -172,10 +179,11 @@ table(columns:(40pt,50pt,50pt), align:center+horizon,[問題],[正答],[配点],
       }
 
       #pagebreak() 
+      //解答及び配点一覧
       #if show-answers-table or show-points-table {
         columns(3)[
         #heading(numbering: none)[#kaito-ichiran]
-        #kaitoran(numbering-style:def-numbering-style,answers, points, show-answers-table, show-points-table)]
+        #kaitoran(numbering-style:def-numbering-style,answers, points, patterns, show-answers-table, show-points-table, total-points)]
       }
       //解答マークシート
       #marked-sheet(answers:answers, response:response, texts:[*正答マークシート*], N:N)
