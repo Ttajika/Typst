@@ -147,9 +147,7 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
     kaito-ichiran:[*正答一覧*],
     response:response,
     show-answers-table:false,
-    show-points-table:true,
-    
-    
+    show-points-table:false,
     body
     ) = {
     for i in range(N) {

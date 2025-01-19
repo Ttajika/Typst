@@ -12,7 +12,8 @@
   math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
   show-answer:false, //これをtrueにすると解答を問題に出すことができる．
   kaito-title:[*解答用紙*], //解答用紙のタイトル
-  show-answers-table:true
+  show-answers-table:true, 
+  show-points-table:true
  
 )
 
