@@ -1,7 +1,7 @@
 #let choice = 10
 
 
-#let response = ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "E","D","F","H", "T")//学籍番号用
+#let response = ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "D","E","F","H", "T")//学籍番号用
 
 #let dummy = ("A","A","A","A","A","A","A")
 
@@ -61,11 +61,11 @@ return IDs
 
 
 #let studentID(dummy, response) = {
-return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:center+horizon)[学籍番号],[#hide[x]],[],[],    [],[],[],[],[],..IDs(dummy,response),
+return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:center+horizon)[学籍番号],[#hide[x]],[],[],    [],[],[],[],[],..IDs(dummy,response),[],table.cell(colspan: 7,stroke:(top:1pt, left:0pt))[],[],table.cell(colspan: 7,stroke:1pt,align:center)[氏名],[],table.cell(colspan: 7,stroke:1pt,align:center,rowspan:5)[#hide[氏名 ]],
     stroke: (x,y) => {
     if x == 0 {(left:0pt)}  
     else if y <= 1 {1pt} else if x == 1 {(left:1pt)} else if x == 7 {(right:1pt)} else  {(left:.5pt, right:.5pt)} 
-    if y == response.len()+1 and x>=1 {(bottom:1pt)} 
+    if y >= response.len()+1 and x>=1 {(bottom:1pt)} 
     
     }
   )
@@ -74,17 +74,17 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 
 #let hanrei = table(columns:(23pt,auto),stroke:0pt,[],[#mark_ans("", col:white, size:10pt)])
 
-#let marked-sheet(answers:(), N:60, response:response, dummy:dummy, texts:"",choice:choice) = {
+#let marked-sheet(answers:(), N:75, response:response, dummy:dummy, texts:"",choice:choice) = {
 
   set page(paper:"a4",flipped: true, margin:(left:0.5cm,right:0.5cm, top:1cm, bottom:1cm), header: [#maru #h(1fr) #text(size:15pt)[#texts] #h(1fr) #maru ], footer: [#maru #h(1fr) #maru ])
   
   grid( columns:(.5cm, auto,auto, auto,auto, .5cm), row-gutter:0pt, column-gutter: 10pt,
   [],[],[#hanrei],[#if N>25{h(5.8pt)+box(hanrei)}],[#if N>50{h(5.9pt)+box(hanrei)}],[],
-  [],[#studentID(dummy,response)  #table(align:center+horizon, stroke: (x,y)=>{ if x>= 1 {1pt}}, columns:(18pt,80*1.75pt),[],[氏名],[],[#hide[氏名\ 氏名]])], grid.cell(colspan:3,columns(3, gutter:0pt)[#table(columns:(23pt,auto), align:center+horizon,..mark_answer(answers, N,choice:choice))] ))
+  [],[#studentID(dummy,response)  ], grid.cell(colspan:3,columns(3, gutter:0pt)[#table(columns:(23pt,auto), align:center+horizon,..mark_answer(answers, N,choice:choice))] ))
 
 }
 
-#let kuranbox(body,width:1.5em, height: 1.0em, stroke:"default", x:0) = box(stroke: if stroke == "default"{ (thickness:1pt,dash: if x == 0 {"solid" } else {"dotted"})} else {stroke},width:width, height: height, baseline: 10%)[#align(center+horizon)[#body]]
+#let kuranbox(body,width:2.2em, height: 1.0em, stroke:"default", x:0) = box(stroke: if stroke == "default"{ (thickness:1pt,dash: if x == 0 {"solid" } else {"dotted"})} else {stroke},width:width, height: height, baseline: 10%)[#align(center+horizon)[#body]]
 
 #let a = ("")*7
 
@@ -100,12 +100,19 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   context{
     let num = counter("kuran").get().at(0)
     let show-answer = counter("showanswer").get().at(0)
-    kuranbox(stroke:if show-answer == 1 {arrange-stroke(pattern)} else {"default"} )[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ]]+if show-answer == 1 {text(fill:red)[ #answer ]+if pattern == 8 {text(fill:blue, size:0.5em )[set end]} }
+    kuranbox(stroke:if show-answer == 1 {arrange-stroke(pattern)} else {"default"} )[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num)  ]
+    #let k-set-inpo = (1,2,8,9)
+    #let k-set = (2,8)
+    #let k-inpo = (1,9)
+    #if show-answer == 1 and (k-set-inpo.contains(pattern)) {align(center)[#place(dx:0em,dy:0.3em,text(0.5em,fill:red.darken(50%), weight:700)[(#if k-set.contains(pattern) {[セ]} #if k-inpo.contains(pattern){[順不]}#(counter("kuran-set-inpo").get().at(0)+1))])]}
+  ]+if show-answer == 1 {text(fill:red.darken(50%), weight: 700)[ #answer ]  }
+   
     if answer != none {counter("kuran-"+str(num)).update(answer)}
     if label !=none {counter("kuran-"+label+"-tx").update(num)}
     if point != none {counter("kuran-"+str(num)+"point").update(point)}
     counter("kuran-"+str(num)+"pattern").update(pattern)
   }
+  if pattern == 9 or pattern == 8 {counter("kuran-set-inpo").step()}
 }
 
 #let refku(numbering-style:def-numbering-style,label,  font:mark-font) = {
@@ -146,8 +153,8 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
     kaito-title:[*解答用紙*],
     kaito-ichiran:[*正答一覧*],
     response:response,
-    show-answers-table:false,
-    show-points-table:false,
+    show-answers-table:true,
+    show-points-table:true,
     body
     ) = {
     for i in range(N) {
@@ -161,6 +168,18 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
     show math.equation: set text(font:math-font) //数式フォント設定
     show raw: set text(font:mono-font)
     if show-answer {counter("showanswer").update(1)} //解答を見せる
+
+    let AddSpacefrac(num, den) = math.frac(
+      [#h(1em /6) #num #h(1em /6)],
+      [#h(1em /6) #den #h(1em /6)],
+      )
+    show math.frac: it => {
+  if it.has("label") and it.label == <stop-frac-recursion> {
+    it
+  } else {
+    [#AddSpacefrac(it.num, it.denom) <stop-frac-recursion> ]
+  }
+}
 
     body
   
@@ -296,7 +315,7 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
   [#box(stroke:1pt,inset:1em,grid(align:horizon,columns:col,rows:row-size,row-gutter: 1em,..narray))]}
 
 
-#let refKN(label:none, mode:none, n:1, numbering-style:def-numbering-style, at:none, stroke:"default", width:1.5em) = {
+#let refKN(label:none, mode:none, n:1, numbering-style:def-numbering-style, at:none, stroke:"default", width:2.2em) = {
   context{
   let num = {if mode == none and label == none and at == none {n}
               else if at != none {counter("kuran").at(at).at(0)}
