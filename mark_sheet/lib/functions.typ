@@ -72,15 +72,13 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
 
 }
 
-#let hanrei = table(columns:(23pt,auto),stroke:0pt,[],[#mark_ans("", col:white, size:10pt)])
 
 #let marked-sheet(answers:(), N:75, response:response, dummy:dummy, texts:"",choice:choice) = {
 
   set page(paper:"a4",flipped: true, margin:(left:0.5cm,right:0.5cm, top:1cm, bottom:1cm), header: [#maru #h(1fr) #text(size:15pt)[#texts] #h(1fr) #maru ], footer: [#maru #h(1fr) #maru ])
   
   grid( columns:(.5cm, auto,auto, auto,auto, .5cm), row-gutter:0pt, column-gutter: 10pt,
-  [],[],[#hanrei],[#if N>25{h(5.8pt)+box(hanrei)}],[#if N>50{h(5.9pt)+box(hanrei)}],[],
-  [],[#studentID(dummy,response)  ], grid.cell(colspan:3,columns(3, gutter:0pt)[#table(columns:(23pt,auto), align:center+horizon,..mark_answer(answers, N,choice:choice))] ))
+  [],[#v(1.65em) #studentID(dummy,response)  ], grid.cell(colspan:3,columns(3, gutter:0pt)[#table(columns:(23pt,auto), stroke: (x,y) => {if y == 0 {(bottom:1pt)} else {1pt}} , align:center+horizon,table.header([],[#mark_ans("", col:white, size:10pt)]),..mark_answer(answers, N,choice:choice))] ))
 
 }
 
