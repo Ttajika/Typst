@@ -1,34 +1,32 @@
+//デフォルトの設定
 #let choice = 10
-
-
 #let response = ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "D","E","F","H", "T")//学籍番号用
-
 #let dummy = ("A","A","A","A","A","A","A")
-
-
-
 #let def-numbering-style = "1"
-
 #let mark-font = ("Noto Sans CJK JP")
 #let mark-size = 8pt
 #let mark-height = 10pt
 #let mark-widhth = 10pt
 #let mark-weight = 500
+#let ID_num = 7 //学籍番号の桁数
 
 
+
+//塗りつぶしの色設定
 #let filling(answer, i) = {
     if answer == i {
       return black}
     else {return white}
   }
 
-
+//解答欄の塗りつぶし設定（answerと番号が合えば塗りつぶし，そうでなければ番号を出力）
 #let mark_ans(answer, col:black, size:mark-size,choice:choice) = {
   for i in range(choice){
     box[#ellipse(width: mark-widhth, height: mark-height, fill: filling(answer, i), stroke:.5pt+col)[#align(center+horizon,)[#text(size:size, fill: if answer == i {black} else {black})[#i]]] ]+h(5pt)  
   }
 }
 
+//解答欄の表を作成するためのarrayを生成する
 #let mark_answer(answers, N, numbering-style:def-numbering-style,choice:choice) = {
   let n = answers.len()
   let question = ()
@@ -38,15 +36,17 @@
   }
   return question
 }
+
+//FormScanner認識用の４隅の丸
 #let maru = box[#circle(stroke:4pt, radius: 8pt)]
 
 
 
 
-
-#let IDs(dummy,response) = {
+//学籍番号出力用の配列を作成
+#let IDs(dummy,response, ID_num:ID_num) = {
 let IDs = ()
-let num = 7
+let num = ID_num
 let rnum = response.len()
 for i in range(rnum) {
     IDs.push([#response.at(i)])
@@ -60,31 +60,42 @@ return IDs
 
 
 
-#let studentID(dummy, response) = {
-return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:center+horizon)[学籍番号],[#hide[x]],[],[],    [],[],[],[],[],..IDs(dummy,response),[],table.cell(colspan: 7,stroke:(top:1pt, left:0pt))[],[],table.cell(colspan: 7,stroke:1pt,align:center)[氏名],[],table.cell(colspan: 7,stroke:1pt,align:center,rowspan:5)[#hide[氏名 ]],
+
+#let studentID(dummy, response, ID_num:ID_num) = {
+let empty_set_array = ()
+for i in range(ID_num ) {
+  empty_set_array.push([])
+}
+
+return table(columns:ID_num + 1,[],align:center+horizon,table.cell(colspan: ID_num, align:center+horizon)[学籍番号],[#hide[x]],..empty_set_array,..IDs(dummy,response, ID_num:ID_num),[],table.cell(colspan: ID_num,stroke:(top:1pt, left:0pt))[],[],table.cell(colspan: ID_num,stroke:1pt,align:center)[氏名],[],table.cell(colspan: ID_num,stroke:1pt,align:center,rowspan:5)[#hide[氏名 ]],
     stroke: (x,y) => {
     if x == 0 {(left:0pt)}  
-    else if y <= 1 {1pt} else if x == 1 {(left:1pt)} else if x == 7 {(right:1pt)} else  {(left:.5pt, right:.5pt)} 
-    if y >= response.len()+1 and x>=1 {(bottom:1pt)} 
-    
+    else if y <= 1 {1pt} else if x == 1 {(left:1pt)} else if x == ID_num {(right:1pt)} else  {(left:.5pt, right:.5pt)} 
+    if y >= response.len()+1 and x>=1 {(bottom:1pt)}  
     }
   )
-
 }
 
 
-#let marked-sheet(answers:(), N:75, response:response, dummy:dummy, texts:"",choice:choice) = {
+#let marked-sheet(answers:(), N:75, response:response, dummy:dummy, texts:"",choice:choice, ID_num:ID_num, numbering-style:def-numbering-style) = {
 
-  set page(paper:"a4",flipped: true, margin:(left:0.5cm,right:0.5cm, top:1cm, bottom:1cm), header: [#maru #h(1fr) #text(size:15pt)[#texts] #h(1fr) #maru ], footer: [#maru #h(1fr) #maru ])
+  set page(paper:"a4",flipped: true, margin:(left:1.0cm,right:0.5cm, top:1.1cm, bottom:1.5cm), header: [#h(-1em) #maru #h(1fr) #text(size:15pt)[#texts] #h(1fr) #maru ], footer: [#h(-1em)#maru #h(1fr) #maru ])
+  let n-columns = {
+     calc.ceil(N/25)   
+  }
+  let column-size = (.5cm, 0.8fr)
+  for i in range(n-columns) {
+    column-size.push(1fr)
+  }
   
-  grid( columns:(.5cm, auto,auto, auto,auto, .5cm), row-gutter:0pt, column-gutter: 10pt,
-  [],[#v(1.65em) #studentID(dummy,response)  ], grid.cell(colspan:3,columns(3, gutter:0pt)[#table(columns:(23pt,auto), stroke: (x,y) => {if y == 0 {(bottom:1pt)} else {1pt}} , align:center+horizon,table.header([],[#mark_ans("", col:white, size:10pt)]),..mark_answer(answers, N,choice:choice))] ))
+  block(width:98%)[#columns(n-columns+1, gutter:-0pt)[ #v(1.65em) #studentID(dummy,response, ID_num:ID_num)  #table(columns:(23pt,auto), stroke: (x,y) => {if y == 0 {(bottom:1pt)} else {1pt}} , align:center+horizon,table.header(text(0.4em)[問題番号],[#mark_ans("", col:white, size:12pt,choice:choice)]),..mark_answer(answers, numbering-style:numbering-style, N,choice:choice))]]
 
 }
 
+//問題番号の形の設定
 #let kuranbox(body,width:2.2em, height: 1.0em, stroke:"default", x:0) = box(stroke: if stroke == "default"{ (thickness:1pt,dash: if x == 0 {"solid" } else {"dotted"})} else {stroke},width:width, height: height, baseline: 10%)[#align(center+horizon)[#body]]
 
-#let a = ("")*7
+
 
 
 #let arrange-stroke(pattern) = {
@@ -93,6 +104,7 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   else if pattern == 1 or pattern == 9 {(paint:green.darken(50%), thickness:1pt  )}
 }
 
+//問題番号の設定
 #let kuran(numbering-style:def-numbering-style, label:none, answer:none, point:none, font:mark-font, pattern:0) = {
   counter("kuran").step()
   context{
@@ -113,6 +125,7 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   if pattern == 9 or pattern == 8 {counter("kuran-set-inpo").step()}
 }
 
+//問題番号を再利用する場合の設定
 #let refku(numbering-style:def-numbering-style,label,  font:mark-font) = {
   context{
   let num = counter("kuran-"+label+"-tx").get().at(0)
@@ -120,6 +133,7 @@ return table(columns:8,[],align:center+horizon,table.cell(colspan: 7, align:cent
   }
 }
 
+//正答・配点欄
 #let kaitoran(numbering-style:def-numbering-style,answers, points, patterns, show-answer, show-point, total-points) = {
   context{
   let pattern-search-s = () //順不同 or セット採点始まり
@@ -140,75 +154,66 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
 }
 }
 
-//設定
-#let project(
-    N:75,
-    body-font:("Noto Serif", "Harano Aji Mincho"),
-    sans-font:("Noto Sans", "Harano Aji Gothic"),
-    math-font:("New computer modern math", "Harano Aji Mincho"),
-    mono-font:("Liberation mono", "Harano Aji Gothic"),
-    show-answer:false,
-    kaito-title:[*解答用紙*],
-    kaito-ichiran:[*正答一覧*],
-    response:response,
-    show-answers-table:true,
-    show-points-table:true,
-    body
-    ) = {
-    for i in range(N) {
-      counter("kuran-"+str(i+1)).update(1000)
-        }
-    set page("a4", margin:1cm, numbering: "1")
-    set text(size:12pt,font:body-font) //地の文のフォント設定
-    set par(first-line-indent: 1em)
-    show strong: set text(font:sans-font,weight: 500) //強調のフォント設定
-    show heading: set text(font:sans-font,weight: 500) //見出しのフォント設定
-    show math.equation: set text(font:math-font) //数式フォント設定
-    show raw: set text(font:mono-font)
-    if show-answer {counter("showanswer").update(1)} //解答を見せる
 
-    let AddSpacefrac(num, den) = math.frac(
-      [#h(1em /6) #num #h(1em /6)],
-      [#h(1em /6) #den #h(1em /6)],
-      )
-    show math.frac: it => {
-  if it.has("label") and it.label == <stop-frac-recursion> {
-    it
-  } else {
-    [#AddSpacefrac(it.num, it.denom) <stop-frac-recursion> ]
+
+
+
+#let Q_underline(label:none,numbering-style:"ア",body) = {
+  counter("toi").step()
+  context{
+  text(size:0.7em)[(#numbering(numbering-style,counter("toi").get().at(0)))]+underline(body)
+  if label != none {
+    counter("toi"+label).update(counter("toi").get().at(0))
+    counter("toi"+label+"kind").update(1)
+    }
+}
+}
+#let Q_box(label:none,numbering-style:"ア") = {
+  counter("toi").step()
+  context[
+  #box(height:12pt,width:15pt, stroke:1pt,baseline: 1pt)[#align(center+horizon)[#text(size:0.8em)[#numbering(numbering-style,counter("toi").get().at(0))]]]
+  #if label != none {
+      counter("toi"+label).update(counter("toi").get().at(0))
+      counter("toi"+label+"kind").update(2) 
+      }
+  ]
+}
+
+#let ref_Q(label,numbering-style:"ア") = {
+  context{
+    let kind = counter("toi"+label+"kind").get().at(0)
+    if kind == 1 {"下線部"} else if kind == 2 {"空欄"}
+    numbering(numbering-style,counter("toi"+label).get().at(0))
+    } 
+    }
+
+#let choice(candidate, row:1, row-size:auto) = {
+  let n = candidate.len()
+  let col = (14pt, 1fr)*int(n/row) 
+  let narray = ()
+  for i in range(n) {
+    narray.push(box[#ellipse(width: 10pt, height: 10pt, stroke:.5pt)[#align(center+horizon,)[#text(size:8pt)[#numbering("1",i+1)]]]])
+    narray.push(candidate.at(i))
+  }
+  [#box(stroke:1pt,inset:1em,grid(align:horizon,columns:col,rows:row-size,row-gutter: 1em,..narray))]}
+
+
+#let refKN(label:none, mode:none, n:1, numbering-style:def-numbering-style, at:none, stroke:"default", width:2.2em, add:0) = {
+  context{
+  let num = {if mode == none and label == none and at == none {n}
+              else if at != none {counter("kuran").at(at).at(0)+add}
+              else if label != none {counter("kuran-"+label+"-tx").final().at(0)+add}
+              else if mode == "f" {counter("kuran").final().at(0)}} 
+  kuranbox(stroke:stroke, width:width)[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ]] 
   }
 }
-
-    body
-  
-    context[
-      #let total-points = 0
-      #let answers = ()
-      #let points = ()
-      #let patterns = ()
-      #for i in range(N) {
-        answers.push(counter("kuran-"+str(i+1)).get().at(0))
-        points.push(counter("kuran-"+str(i+1)+"point").get().at(0))
-        total-points += counter("kuran-"+str(i+1)+"point").get().at(0)
-        patterns.push(counter("kuran-"+str(i+1)+"pattern").get().at(0))
-      }
-
-      #pagebreak() 
-      //解答及び配点一覧
-      #if show-answers-table or show-points-table {
-        columns(3)[
-        #heading(numbering: none)[#kaito-ichiran]
-        #kaitoran(numbering-style:def-numbering-style,answers, points, patterns, show-answers-table, show-points-table, total-points)]
-      }
-      //解答マークシート
-      #marked-sheet(answers:answers, response:response, texts:[*正答マークシート*], N:N)
-      //配点マークシート
-      #marked-sheet(answers:points, response:response,dummy:("0")*7,texts:[ *配点マークシート*  満点: #total-points ], N:N)
-      //採点パターン
-      #marked-sheet(answers:patterns, response:response, dummy:("1")*7,texts:[ *採点パターンマークシート* ], N:N)
-      ]
-      marked-sheet(dummy:("","","","","","",""),texts:[#kaito-title], response:response, N:N)
+#let mondai(body,name:"問題") = {
+  counter("mondai").step()
+  block(width:100%)[#context[#strong[#name #numbering("1.",counter("mondai").get().at(0))]
+  #body 
+  ]]
 }
+
 
 #let help = {
   [#heading(numbering: none)[コマンドヘルプ]
@@ -229,7 +234,6 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
   ]
   counter("kuran").update(0)
 }
-
 
 
 #let tutorial ={[
@@ -273,63 +277,6 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
 
 ]}
 
-#let Q_underline(label:none,numbering-style:"ア",body) = {
-  counter("toi").step()
-  context{
-  text(size:0.7em)[(#numbering(numbering-style,counter("toi").get().at(0)))]+underline(body)
-  if label != none {
-    counter("toi"+label).update(counter("toi").get().at(0))
-    counter("toi"+label+"kind").update(1)
-    }
-}
-}
-#let Q_box(label:none,numbering-style:"ア") = {
-  counter("toi").step()
-  context[
-  #box(height:12pt,width:15pt, stroke:1pt,baseline: 1pt)[#align(center+horizon)[#text(size:0.8em)[#numbering(numbering-style,counter("toi").get().at(0))]]]
-  #if label != none {
-      counter("toi"+label).update(counter("toi").get().at(0))
-      counter("toi"+label+"kind").update(2) 
-      }
-  ]
-}
-
-#let ref_Q(label,numbering-style:"ア") = {
-  context{
-    let kind = counter("toi"+label+"kind").get().at(0)
-    if kind == 1 {"下線部"} else if kind == 2 {"空欄"}
-    numbering(numbering-style,counter("toi"+label).get().at(0))
-    } 
-    }
-
-#let choice(candidate, row:1, row-size:auto) = {
-  let n = candidate.len()
-  let col = (14pt, 1fr)*int(n/row) 
-  let narray = ()
-  for i in range(n) {
-    narray.push(box[#ellipse(width: 10pt, height: 10pt, stroke:.5pt)[#align(center+horizon,)[#text(size:8pt)[#numbering("1",i+1)]]]])
-    narray.push(candidate.at(i))
-  }
-  [#box(stroke:1pt,inset:1em,grid(align:horizon,columns:col,rows:row-size,row-gutter: 1em,..narray))]}
-
-
-#let refKN(label:none, mode:none, n:1, numbering-style:def-numbering-style, at:none, stroke:"default", width:2.2em) = {
-  context{
-  let num = {if mode == none and label == none and at == none {n}
-              else if at != none {counter("kuran").at(at).at(0)}
-              else if label != none {counter("kuran-"+label+"-tx").final().at(0)}
-              else if mode == "f" {counter("kuran").final().at(0)}} 
-  kuranbox(stroke:stroke, width:width)[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ]] 
-  }
-}
-#let mondai(body,name:"問題") = {
-  counter("mondai").step()
-  block(width:100%)[#context[#strong[#name #numbering("1.",counter("mondai").get().at(0))]
-  #body 
-  ]]
-}
-
-
 
 #let sample-exam = {
   [```typst
@@ -341,15 +288,22 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
   sans-font:("New Computer Modern Sans", "Harano Aji Gothic"), //強調フォント
   math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
   show-answer:false, //これをtrueにすると解答を問題に出すことができる．
+  kaito-title:[*解答用紙*], //解答用紙のタイトル
+  show-answers-table:true, 
+  show-points-table:true
 )
 
 #set heading(numbering: "大問1.1")
-
+//heading（見出し）の番号付の設定
 
 #heading(numbering:none)[サンプル問題[科目名]:期末試験]
 
 =
+// = で見出しを表す．== のように重ねるごとに見出しのレベルが下がる
+
 #let sentaku = "最も適当なものを次の１〜４の中から選べ．"
+// #let命令で関数や変数を作ることができる．よく使う言い回しは変数にしておくと一括で変更するときに楽．
+
 次の #refKN() から #refKN(at:<second>) まで, 最も適当なものを選択肢欄の１〜４の中から選べ．
 
 #mondai[
@@ -373,9 +327,11 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
 
 
 =  <second>
+//headeingにはラベルがつけられる
 
-#context[#refKN(n:counter("kuran").get().at(0)+1) から #refKN(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．]
 
+#refKN(at:<second>,add:1) から #refKN(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．
+//headingにつけるラベルでその位置での最新の問題番号を参照する. 引数addで番号を足す.
 
 
 #mondai[
@@ -407,7 +363,6 @@ $
   #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)
   #kuran(answer:3,point:0,pattern:2)#kuran(answer:9,point:8, pattern:8)
 ]
-
 
 
 

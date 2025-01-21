@@ -1,4 +1,4 @@
-#import "lib/functions.typ":*
+#import "lib/template.typ":*
 #import "@preview/cetz:0.3.1"
 #import "@preview/rexllent:0.2.3": xlsx-parser
 
@@ -12,9 +12,8 @@
   math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
   show-answer:false, //これをtrueにすると解答を問題に出すことができる．
   kaito-title:[*解答用紙*], //解答用紙のタイトル
-  show-answers-table:true, 
-  show-points-table:true
- 
+  show-answers-table:true, //正答一覧の正答を表示
+  show-points-table:true, //正答一覧の配点を表示
 )
 
 
@@ -29,12 +28,16 @@
 //以下は問題のサンプル
 
 #set heading(numbering: "大問1.1")
-
+//heading（見出し）の番号付の設定
 
 #heading(numbering:none)[サンプル問題[科目名]:期末試験]
 
 =
+// = で見出しを表す．== のように重ねるごとに見出しのレベルが下がる
+
 #let sentaku = "最も適当なものを次の１〜４の中から選べ．"
+// #let命令で関数や変数を作ることができる．よく使う言い回しは変数にしておくと一括で変更するときに楽．
+
 次の #refKN() から #refKN(at:<second>) まで, 最も適当なものを選択肢欄の１〜４の中から選べ．
 
 #mondai[
@@ -58,9 +61,11 @@
 
 
 =  <second>
+//headeingにはラベルがつけられる
 
-#context[#refKN(n:counter("kuran").get().at(0)+1) から #refKN(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．]
 
+#refKN(at:<second>,add:1) から #refKN(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．
+//headingにつけるラベルでその位置での最新の問題番号を参照する. 引数addで番号を足す.
 
 
 #mondai[
