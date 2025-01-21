@@ -64,7 +64,7 @@
 //headeingにはラベルがつけられる
 
 
-#refKN(at:<second>,add:1) から #refKN(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．
+#refKN(at:<second>,add:1) から #refKN(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．ただし #refKN(mode:"")#refKN(mode:"") は二桁の数字を表す．
 //headingにつけるラベルでその位置での最新の問題番号を参照する. 引数addで番号を足す.
 
 
@@ -84,7 +84,7 @@ $
 #mondai[
 1〜6までの数字の中から偶数を３つ選びなさい
 
-#kuran(answer:2,pattern:1, point:2)#kuran(answer:4, pattern:1, point:2)#kuran(answer:6, pattern:9, point:2)
+#kuran(answer:2,pattern:1, point:2) #kuran(answer:4, pattern:1, point:2) #kuran(answer:6, pattern:9, point:2)
 //順不同の場合は引数patternを最後以外を1, 最後を9にする．得点は最後のものが１個あたりの点数として採用される．
 ]
 

@@ -43,9 +43,13 @@
         [#AddSpacefrac(it.num, it.denom) <stop-frac-recursion> ]
       }
     }
+    //
 
+    
+    //本文
     body
-  
+
+    //正答・配点・採点パターンを集計する
     context[
       #let total-points = 0
       #let answers = ()
@@ -57,7 +61,7 @@
         total-points += counter("kuran-"+str(i+1)+"point").get().at(0)
         patterns.push(counter("kuran-"+str(i+1)+"pattern").get().at(0))
       }
-
+      
       #pagebreak() 
       //解答及び配点一覧
       #if show-answers-table or show-points-table {
@@ -65,13 +69,17 @@
         #heading(numbering: none)[#kaito-ichiran]
         #kaitoran(numbering-style:numbering-style,answers, points, patterns, show-answers-table, show-points-table, total-points)]
       }
+      
       //解答マークシート
       #marked-sheet(answers:answers, numbering-style:numbering-style, response:response, ID_num:ID_num, dummy:("A")*ID_num, choice:choice,texts:[*正答マークシート*], N:N)
+      
       //配点マークシート
       #marked-sheet(answers:points, response:response,dummy:("0")*ID_num, ID_num:ID_num,choice:choice, numbering-style:numbering-style,texts:[ *配点マークシート*  満点: #total-points ], N:N)
-      //採点パターン
+      
+      //採点パターンマークシート
       #marked-sheet(answers:patterns, response:response, ID_num:ID_num,dummy:("1")*ID_num, choice:choice,numbering-style:numbering-style,texts:[ *採点パターンマークシート* ], N:N)
       ]
+      
       //空のマークシート
       marked-sheet(dummy:("XXX")*ID_num,ID_num:ID_num, choice:choice,numbering-style:numbering-style,texts:[#kaito-title], response:response, N:N)
 }

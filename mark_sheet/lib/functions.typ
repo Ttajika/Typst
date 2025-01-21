@@ -79,7 +79,7 @@ return table(columns:ID_num + 1,[],align:center+horizon,table.cell(colspan: ID_n
 
 #let marked-sheet(answers:(), N:75, response:response, dummy:dummy, texts:"",choice:choice, ID_num:ID_num, numbering-style:def-numbering-style) = {
 
-  set page(paper:"a4",flipped: true, margin:(left:1.0cm,right:0.5cm, top:1.1cm, bottom:1.5cm), header: [#h(-1em) #maru #h(1fr) #text(size:15pt)[#texts] #h(1fr) #maru ], footer: [#h(-1em)#maru #h(1fr) #maru ])
+  set page(paper:"a4",flipped: true, margin:(left:.5cm,right:.5cm, top:1.15cm, bottom:1.5cm), header: [ #maru #h(1fr) #text(size:15pt)[#texts] #h(1fr) #maru ], footer: [#maru #h(1fr) #maru ])
   let n-columns = {
      calc.ceil(N/25)   
   }
@@ -88,7 +88,7 @@ return table(columns:ID_num + 1,[],align:center+horizon,table.cell(colspan: ID_n
     column-size.push(1fr)
   }
   
-  block(width:98%)[#columns(n-columns+1, gutter:-0pt)[ #v(1.65em) #studentID(dummy,response, ID_num:ID_num)  #table(columns:(23pt,auto), stroke: (x,y) => {if y == 0 {(bottom:1pt)} else {1pt}} , align:center+horizon,table.header(text(0.4em)[問題番号],[#mark_ans("", col:white, size:12pt,choice:choice)]),..mark_answer(answers, numbering-style:numbering-style, N,choice:choice))]]
+  align(center,block(width:95%)[#columns(n-columns+1, gutter:-0pt)[ #v(1.65em) #studentID(dummy,response, ID_num:ID_num)  #table(columns:(23pt,auto), stroke: (x,y) => {if y == 0 {(bottom:1pt)} else {1pt}} , align:center+horizon,table.header(text(0.4em)[解答番号],[#mark_ans("", col:white, size:12pt,choice:choice)]),..mark_answer(answers, numbering-style:numbering-style, N,choice:choice))]])
 
 }
 
@@ -104,7 +104,7 @@ return table(columns:ID_num + 1,[],align:center+horizon,table.cell(colspan: ID_n
   else if pattern == 1 or pattern == 9 {(paint:green.darken(50%), thickness:1pt  )}
 }
 
-//問題番号の設定
+//解答欄番号の設定
 #let kuran(numbering-style:def-numbering-style, label:none, answer:none, point:none, font:mark-font, pattern:0) = {
   counter("kuran").step()
   context{
@@ -125,7 +125,7 @@ return table(columns:ID_num + 1,[],align:center+horizon,table.cell(colspan: ID_n
   if pattern == 9 or pattern == 8 {counter("kuran-set-inpo").step()}
 }
 
-//問題番号を再利用する場合の設定
+//解答欄番号を再利用する場合の設定
 #let refku(numbering-style:def-numbering-style,label,  font:mark-font) = {
   context{
   let num = counter("kuran-"+label+"-tx").get().at(0)
@@ -157,7 +157,7 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
 
 
 
-
+//自動連番番号付き下線
 #let Q_underline(label:none,numbering-style:"ア",body) = {
   counter("toi").step()
   context{
@@ -168,6 +168,8 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
     }
 }
 }
+
+//自動連番番号付き欄
 #let Q_box(label:none,numbering-style:"ア") = {
   counter("toi").step()
   context[
@@ -179,6 +181,7 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
   ]
 }
 
+//下線・欄の参照
 #let ref_Q(label,numbering-style:"ア") = {
   context{
     let kind = counter("toi"+label+"kind").get().at(0)
@@ -187,6 +190,7 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
     } 
     }
 
+//選択肢ボックス    
 #let choice(candidate, row:1, row-size:auto) = {
   let n = candidate.len()
   let col = (14pt, 1fr)*int(n/row) 
@@ -197,16 +201,20 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
   }
   [#box(stroke:1pt,inset:1em,grid(align:horizon,columns:col,rows:row-size,row-gutter: 1em,..narray))]}
 
-
+//解答欄番号の参照
 #let refKN(label:none, mode:none, n:1, numbering-style:def-numbering-style, at:none, stroke:"default", width:2.2em, add:0) = {
   context{
   let num = {if mode == none and label == none and at == none {n}
               else if at != none {counter("kuran").at(at).at(0)+add}
               else if label != none {counter("kuran-"+label+"-tx").final().at(0)+add}
-              else if mode == "f" {counter("kuran").final().at(0)}} 
-  kuranbox(stroke:stroke, width:width)[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ]] 
+              else if mode == "f" {counter("kuran").final().at(0)}
+              else if mode == "" {}
+              }
+  kuranbox(stroke:stroke, width:width)[#text(font:mark-font, weight: mark-weight)[#if mode != ""{numbering(numbering-style,num) }]] 
   }
 }
+
+//自動連番問題
 #let mondai(body,name:"問題") = {
   counter("mondai").step()
   block(width:100%)[#context[#strong[#name #numbering("1.",counter("mondai").get().at(0))]
