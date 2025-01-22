@@ -110,13 +110,13 @@ return table(columns:ID_num + 1,[],align:center+horizon,table.cell(colspan: ID_n
   context{
     let num = counter("kuran").get().at(0)
     let show-answer = counter("showanswer").get().at(0)
-    kuranbox(stroke:if show-answer == 1 {arrange-stroke(pattern)} else {"default"}, width:kuran-width + 1em*show-answer )[
-    #text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ]
+    kuranbox(stroke:if show-answer == 1 {arrange-stroke(pattern)} else {"default"}, width:kuran-width + .7em*show-answer )[
+    #align(if show-answer == 1{ right} else {center}, text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ])
     #let k-set-inpo = (1,2,8,9)
     #let k-set = (2,8)
     #let k-inpo = (1,9)
     #if show-answer == 1 and (k-set-inpo.contains(pattern)) {align(center)[#place(dx:0em,dy:0.3em,text(0.5em,fill:red.darken(50%), weight:700)[#if k-set.contains(pattern) {[セ]} #if k-inpo.contains(pattern){[順不]}#(counter("kuran-set-inpo").get().at(0)+1)])]}
-    #if show-answer == 1 {place(dx:-0%,dy:-84%,box(fill:gray,text(fill:red.darken(50%), weight: 700, size:0.8em)[#answer]  ))}
+    #if show-answer == 1 {place(dx:3%,dy:-84%,box(fill:black,inset:1.5pt,text(fill:red.lighten(60%), weight: 700, size:1.2em, font:mark-font)[#answer]  ))}
     ]
     let num = counter("kuran").get().at(0)
     if answer != none {counter("kuran-"+str(num)).update(answer)}
