@@ -4,8 +4,8 @@
 //設定
 #let project(
     N:75,
-    body-font:("Noto Serif", "Harano Aji Mincho"),
-    sans-font:("Noto Sans", "Harano Aji Gothic"),
+    body-font:("Liberation Serif", "Harano Aji Mincho"),
+    sans-font:("Liberation Sans", "Harano Aji Gothic"),
     math-font:("New computer modern math", "Harano Aji Mincho"),
     mono-font:("Liberation mono", "Harano Aji Gothic"),
     show-answer:false,
@@ -23,13 +23,17 @@
       counter("kuran-"+str(i+1)).update(1000)
         }
     set page("a4", margin:1cm, numbering: "1")
-    set text(size:12pt,font:body-font) //地の文のフォント設定
-    set par(first-line-indent: 1em)
+    set text(size:12pt,font:body-font, lang:"ja") //地の文のフォント設定
+    set par(first-line-indent: 1em, justify: true)
+    
     show strong: set text(font:sans-font,weight: 500) //強調のフォント設定
     show heading: set text(font:sans-font,weight: 500) //見出しのフォント設定
     show math.equation: set text(font:math-font) //数式フォント設定
     show raw: set text(font:mono-font)
     if show-answer {counter("showanswer").update(1)} //解答を見せる
+    // show regex("[\p{scx:Han}\p{scx:Hira}\p{scx:Kana}]"): set text(font: "Harano Aji Mincho", size: 0.925em)
+
+    
 
     //分数の両端にスペースを追加する
     let AddSpacefrac(num, den) = math.frac(

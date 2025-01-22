@@ -30,15 +30,29 @@
 #set heading(numbering: "大問1.1")
 //heading（見出し）の番号付の設定
 
+#show heading: set text(weight:700 )
+
+//一桁の数字だけを全角にするコード
+// #let hanzen(it) = {
+//   let han = ()
+//   for i in range(10) {
+//     han.push(str.from-unicode(0xFF10 + i))
+//   }
+//   [#han.at(int(it.text))]
+// }
+// #show regex("\b\d\b"): it => {hanzen(it)}
+// //
+
+
 #heading(numbering:none)[サンプル問題[科目名]:期末試験]
 
 =
 // = で見出しを表す．== のように重ねるごとに見出しのレベルが下がる
 
-#let sentaku = "最も適当なものを次の１〜４の中から選べ．"
+#let sentaku = [最も適当なものを次の 1〜4 の中から選べ．]
 // #let命令で関数や変数を作ることができる．よく使う言い回しは変数にしておくと一括で変更するときに楽．
 
-次の #refKN() から #refKN(at:<second>) まで, 最も適当なものを選択肢欄の１〜４の中から選べ．
+次の #refKN() から #refKN(at:<second>) まで, 最も適当なものを選択肢欄の 1〜4 の中から選べ．
 
 #mondai[
 #lorem(10)
@@ -82,7 +96,7 @@ $
 
 
 #mondai[
-1〜6までの数字の中から偶数を３つ選びなさい
+1〜6 までの数字の中から偶数を３つ選びなさい
 
 #kuran(answer:2,pattern:1, point:2) #kuran(answer:4, pattern:1, point:2) #kuran(answer:6, pattern:9, point:2)
 //順不同の場合は引数patternを最後以外を1, 最後を9にする．得点は最後のものが１個あたりの点数として採用される．

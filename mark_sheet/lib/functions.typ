@@ -9,7 +9,7 @@
 #let mark-widhth = 10pt
 #let mark-weight = 500
 #let ID_num = 7 //学籍番号の桁数
-
+#let kuran-width = 1.5em
 
 
 //塗りつぶしの色設定
@@ -22,7 +22,7 @@
 //解答欄の塗りつぶし設定（answerと番号が合えば塗りつぶし，そうでなければ番号を出力）
 #let mark_ans(answer, col:black, size:mark-size,choice:choice) = {
   for i in range(choice){
-    box[#ellipse(width: mark-widhth, height: mark-height, fill: filling(answer, i), stroke:.5pt+col)[#align(center+horizon,)[#text(size:size, fill: if answer == i {black} else {black})[#i]]] ]+h(5pt)  
+    box[#ellipse(width: mark-widhth, height: mark-height, fill: filling(answer, i), stroke:.5pt+col)[#align(center+horizon,)[#text(size:size, top-edge: 0.7em, fill: if answer == i {black} else {black})[#i]]] ]+h(5pt)  
   }
 }
 
@@ -51,7 +51,7 @@ let rnum = response.len()
 for i in range(rnum) {
     IDs.push([#response.at(i)])
   for j in range(num){
-    IDs.push(box[#ellipse(width: mark-widhth, height: mark-height, fill: filling(dummy.at(j), response.at(i)), stroke:.5pt)[#align(center+horizon,)[#text(size:mark-size,fill: if dummy.at(j) == response.at(i) {black} else {black},response.at(i))]] ])  
+    IDs.push(box[#ellipse(width: mark-widhth, height: mark-height, fill: filling(dummy.at(j), response.at(i)), stroke:.5pt)[#align(center+horizon,)[#text(size:mark-size,top-edge: 0.7em,fill: if dummy.at(j) == response.at(i) {black} else {black},response.at(i))]] ])  
   }  
 }
 return IDs
@@ -88,12 +88,12 @@ return table(columns:ID_num + 1,[],align:center+horizon,table.cell(colspan: ID_n
     column-size.push(1fr)
   }
   
-  align(center,block(width:95%)[#columns(n-columns+1, gutter:-0pt)[ #v(1.65em) #studentID(dummy,response, ID_num:ID_num)  #table(columns:(23pt,auto), stroke: (x,y) => {if y == 0 {(bottom:1pt)} else {1pt}} , align:center+horizon,table.header(text(0.4em)[解答番号],[#mark_ans("", col:white, size:12pt,choice:choice)]),..mark_answer(answers, numbering-style:numbering-style, N,choice:choice))]])
+  align(center,block(width:95%)[#columns(n-columns+1, gutter:-0pt)[ #v(1.65em) #studentID(dummy,response, ID_num:ID_num)  #table(columns:(23pt,auto), stroke: (x,y) => {if y == 0 {(bottom:1pt)} else {1pt}} , align:center+horizon,table.header(text(0.4em)[解答\ 番号],[#mark_ans("", col:white, size:12pt,choice:choice)]),..mark_answer(answers, numbering-style:numbering-style, N,choice:choice))]])
 
 }
 
 //問題番号の形の設定
-#let kuranbox(body,width:2.2em, height: 1.0em, stroke:"default", x:0) = box(stroke: if stroke == "default"{ (thickness:1pt,dash: if x == 0 {"solid" } else {"dotted"})} else {stroke},width:width, height: height, baseline: 10%)[#align(center+horizon)[#body]]
+#let kuranbox(body,width:kuran-width, height: 1.0em, stroke:"default", x:0) = box(stroke: if stroke == "default"{ (thickness:1pt,dash: if x == 0 {"solid" } else {"dotted"})} else {stroke},width:width, height: height, baseline: 10%)[#align(center+horizon)[#body]]
 
 
 
@@ -110,13 +110,15 @@ return table(columns:ID_num + 1,[],align:center+horizon,table.cell(colspan: ID_n
   context{
     let num = counter("kuran").get().at(0)
     let show-answer = counter("showanswer").get().at(0)
-    kuranbox(stroke:if show-answer == 1 {arrange-stroke(pattern)} else {"default"} )[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num)  ]
+    kuranbox(stroke:if show-answer == 1 {arrange-stroke(pattern)} else {"default"}, width:kuran-width + 1em*show-answer )[
+    #text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ]
     #let k-set-inpo = (1,2,8,9)
     #let k-set = (2,8)
     #let k-inpo = (1,9)
-    #if show-answer == 1 and (k-set-inpo.contains(pattern)) {align(center)[#place(dx:0em,dy:0.3em,text(0.5em,fill:red.darken(50%), weight:700)[(#if k-set.contains(pattern) {[セ]} #if k-inpo.contains(pattern){[順不]}#(counter("kuran-set-inpo").get().at(0)+1))])]}
-  ]+if show-answer == 1 {text(fill:red.darken(50%), weight: 700)[ #answer ]  }
-   
+    #if show-answer == 1 and (k-set-inpo.contains(pattern)) {align(center)[#place(dx:0em,dy:0.3em,text(0.5em,fill:red.darken(50%), weight:700)[#if k-set.contains(pattern) {[セ]} #if k-inpo.contains(pattern){[順不]}#(counter("kuran-set-inpo").get().at(0)+1)])]}
+    #if show-answer == 1 {place(dx:-0%,dy:-84%,box(fill:gray,text(fill:red.darken(50%), weight: 700, size:0.8em)[#answer]  ))}
+    ]
+    let num = counter("kuran").get().at(0)
     if answer != none {counter("kuran-"+str(num)).update(answer)}
     if label !=none {counter("kuran-"+label+"-tx").update(num)}
     if point != none {counter("kuran-"+str(num)+"point").update(point)}
@@ -196,13 +198,13 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
   let col = (14pt, 1fr)*int(n/row) 
   let narray = ()
   for i in range(n) {
-    narray.push(box[#ellipse(width: 10pt, height: 10pt, stroke:.5pt)[#align(center+horizon,)[#text(size:8pt)[#numbering("1",i+1)]]]])
+    narray.push(box[#ellipse(width: mark-widhth, height: mark-height, stroke:.5pt)[#align(center+horizon,)[#text(size:mark-size,top-edge: 0.7em,)[#numbering("1",i+1)]]]])
     narray.push(candidate.at(i))
   }
   [#box(stroke:1pt,inset:1em,grid(align:horizon,columns:col,rows:row-size,row-gutter: 1em,..narray))]}
 
 //解答欄番号の参照
-#let refKN(label:none, mode:none, n:1, numbering-style:def-numbering-style, at:none, stroke:"default", width:2.2em, add:0) = {
+#let refKN(label:none, mode:none, n:1, numbering-style:def-numbering-style, at:none, stroke:"default", width:kuran-width, add:0) = {
   context{
   let num = {if mode == none and label == none and at == none {n}
               else if at != none {counter("kuran").at(at).at(0)+add}
