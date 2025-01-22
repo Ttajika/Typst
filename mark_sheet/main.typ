@@ -1,9 +1,6 @@
-#import "lib/template.typ":*
+#import "lib/template.typ":* //マークシートのテンプレートを読み込む
 #import "@preview/cetz:0.3.1" //図を描くためのパッケージ
 #import "@preview/rexllent:0.2.3": xlsx-parser //excelの表を取り込む機能
-
-
-
 
 #show: project.with(
   N:75, //問題数
@@ -15,36 +12,14 @@
   show-answers-table:true, //正答一覧の正答を表示
   show-points-table:true, //正答一覧の配点を表示
 )
-
-
-
-
 //本文はここに書く
-
-
-
-
-
-//以下は問題のサンプル
 
 #set heading(numbering: "大問1.1")
 //heading（見出し）の番号付の設定
 
-#show heading: set text(weight:700 )
+#show heading: set text(weight:700 ) //見出しのウェイトを変更
 
-//一桁の数字だけを全角にするコード
-// #let hanzen(it) = {
-//   let han = ()
-//   for i in range(10) {
-//     han.push(str.from-unicode(0xFF10 + i))
-//   }
-//   [#han.at(int(it.text))]
-// }
-// #show regex("\b\d\b"): it => {hanzen(it)}
-// //
-
-
-#heading(numbering:none)[サンプル問題[科目名]:期末試験]
+#heading(numbering:none)[サンプル問題[科目名]:期末試験] //見出しを作る/numberingは自動連番の番号の書式設定, noneは番号を出力しない.
 
 =
 // = で見出しを表す．== のように重ねるごとに見出しのレベルが下がる
@@ -92,10 +67,7 @@ $
 //セット採点の場合は引数patternを最後以外は2, 最後を8にする．得点は最後以外を0にする
 
 ただし #refku("z") には偶数が入る．//番号を再利用し，それとわかるようにするには`#refku`を用いる．ラベルを用いて参照できる．#refKN("z")ならそのまま再利用．
-
-
 ]
-
 
 #mondai[
 1〜6 までの数字の中から偶数を３つ選びなさい
@@ -104,16 +76,14 @@ $
 //順不同の場合は引数patternを最後以外を1, 最後を9にする．得点は最後のものが１個あたりの点数として採用される．
 ]
 
-
 #mondai[
   #let newul(label:none,body) = Q_underline(label:none,numbering-style:"A",body)
-  //#letを使って命令を新しく作ることができます
+  //#letを使って命令を新しく作ることができます．この場合は番号の書式を変更して，番号付き下線を新しく定義し直しています．
   #newul[２つの二桁の数字を選んでください]. 空欄や下線部に振る数字・文字は変えることができます．
   
   #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)
   #kuran(answer:3,point:0,pattern:2)#kuran(answer:9,point:8, pattern:8)
 ]
-
 
 #pagebreak()
 サンプル問題のTypstコード

@@ -295,10 +295,6 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
 
 #let sample-exam = {
   [```typst
-#import "lib/template.typ":*
-#import "@preview/cetz:0.3.1" //図を描くためのパッケージ
-#import "@preview/rexllent:0.2.3": xlsx-parser //excelの表を取り込む機能
-
 #show: project.with(
   N:75, //問題数
   body-font:("New Computer Modern", "Harano Aji Mincho"), //本文フォント
@@ -314,9 +310,9 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
 #set heading(numbering: "大問1.1")
 //heading（見出し）の番号付の設定
 
-#show heading: set text(weight:700 )
+#show heading: set text(weight:700 ) //見出しのウェイトを変更
 
-#heading(numbering:none)[サンプル問題[科目名]:期末試験]
+#heading(numbering:none)[サンプル問題[科目名]:期末試験] //見出しを作る/numberingは自動連番の番号の書式設定, noneは番号を出力しない.
 
 =
 // = で見出しを表す．== のように重ねるごとに見出しのレベルが下がる
@@ -375,7 +371,7 @@ $
 
 #mondai[
   #let newul(label:none,body) = Q_underline(label:none,numbering-style:"A",body)
-  //#letを使って命令を新しく作ることができます
+  //#letを使って命令を新しく作ることができます. この場合は番号の書式を変更して，番号付き下線を新しく定義し直しています．
   #newul[２つの二桁の数字を選んでください]. 空欄や下線部に振る数字・文字は変えることができます．
   
   #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)
