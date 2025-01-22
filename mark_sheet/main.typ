@@ -1,6 +1,6 @@
 #import "lib/template.typ":*
-#import "@preview/cetz:0.3.1"
-#import "@preview/rexllent:0.2.3": xlsx-parser
+#import "@preview/cetz:0.3.1" //図を描くためのパッケージ
+#import "@preview/rexllent:0.2.3": xlsx-parser //excelの表を取り込む機能
 
 
 
@@ -62,6 +62,8 @@
 ]
 //引数answerで正答番号，pointで点数を指定する．
 //choiceで選択肢欄を作ることができる．
+
+#answer-mode-only[解答を表示するとき専用のメモ．問題には表示できないメモ書きなどに利用]
 
 #mondai[
  #Q_underline(label:"y")[あいうえお]という．そうすると#Q_box(label:"x")は日本国憲法を発布した．

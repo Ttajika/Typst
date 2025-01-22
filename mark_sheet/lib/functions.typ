@@ -59,8 +59,7 @@ return IDs
 
 
 
-
-
+//学籍番号のマーク欄を生成
 #let studentID(dummy, response, ID_num:ID_num) = {
 let empty_set_array = ()
 for i in range(ID_num ) {
@@ -77,6 +76,7 @@ return table(columns:ID_num + 1,[],align:center+horizon,table.cell(colspan: ID_n
 }
 
 
+//マークシートを生成
 #let marked-sheet(answers:(), N:75, response:response, dummy:dummy, texts:"",choice:choice, ID_num:ID_num, numbering-style:def-numbering-style) = {
 
   set page(paper:"a4",flipped: true, margin:(left:.5cm,right:.5cm, top:1.15cm, bottom:1.5cm), header: [ #maru #h(1fr) #text(size:15pt)[#texts] #h(1fr) #maru ], footer: [#maru #h(1fr) #maru ])
@@ -100,8 +100,8 @@ return table(columns:ID_num + 1,[],align:center+horizon,table.cell(colspan: ID_n
 
 #let arrange-stroke(pattern) = {
   if pattern == 0 {1pt+black}
-  else if pattern == 2 or pattern == 8 {(paint:blue, thickness:1pt  )}
-  else if pattern == 1 or pattern == 9 {(paint:green.darken(50%), thickness:1pt  )}
+  else if pattern == 2 or pattern == 8 {(paint:blue, thickness:2pt  )}
+  else if pattern == 1 or pattern == 9 {(paint:green.darken(50%), thickness:2pt  )}
 }
 
 //解答欄番号の設定
@@ -125,6 +125,11 @@ return table(columns:ID_num + 1,[],align:center+horizon,table.cell(colspan: ID_n
     counter("kuran-"+str(num)+"pattern").update(pattern)
   }
   if pattern == 9 or pattern == 8 {counter("kuran-set-inpo").step()}
+}
+
+//
+#let answer-mode-only(body) = {
+  context{if counter("showanswer").get().at(0) == 1 {block(stroke:red,inset:1pt,body)}}
 }
 
 //解答欄番号を再利用する場合の設定
@@ -152,7 +157,7 @@ return table(columns:ID_num + 1,[],align:center+horizon,table.cell(colspan: ID_n
   if patterns.at(num) == 8 or patterns.at(num) == 9 {pattern-search-l.push(num)}
   
 }
-table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.contains(y -1 ) {( left:1pt, right:1pt)} else if x == 2 and pattern-search-s.contains(y - 1) {(top:1pt , left:1pt, right:1pt)} else if x == 2 and pattern-search-l.contains(y -1 ) {(left:1pt, right:1pt, bottom:1pt)}  else {1pt}}, align:horizon,[問題],[正答],[配点],..tab,[計],[],[#total-points])
+table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.contains(y -1 ) {( left:1pt, right:1pt)} else if x == 2 and pattern-search-s.contains(y - 1) {(top:1pt , left:1pt, right:1pt)} else if x == 2 and pattern-search-l.contains(y -1 ) {(left:1pt, right:1pt, bottom:1pt)}  else {1pt}}, align:horizon,[設問],[正答],[配点],..tab,[計],[],[#total-points])
 }
 }
 
@@ -290,7 +295,9 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
 
 #let sample-exam = {
   [```typst
-#import "lib/functions.typ":*
+#import "lib/template.typ":*
+#import "@preview/cetz:0.3.1" //図を描くためのパッケージ
+#import "@preview/rexllent:0.2.3": xlsx-parser //excelの表を取り込む機能
 
 #show: project.with(
   N:75, //問題数
@@ -299,22 +306,25 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
   math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
   show-answer:false, //これをtrueにすると解答を問題に出すことができる．
   kaito-title:[*解答用紙*], //解答用紙のタイトル
-  show-answers-table:true, 
-  show-points-table:true
+  show-answers-table:true, //正答一覧の正答を表示
+  show-points-table:true, //正答一覧の配点を表示
 )
+//本文はここに書く
 
 #set heading(numbering: "大問1.1")
 //heading（見出し）の番号付の設定
+
+#show heading: set text(weight:700 )
 
 #heading(numbering:none)[サンプル問題[科目名]:期末試験]
 
 =
 // = で見出しを表す．== のように重ねるごとに見出しのレベルが下がる
 
-#let sentaku = "最も適当なものを次の１〜４の中から選べ．"
+#let sentaku = [最も適当なものを次の 1〜4 の中から選べ．]
 // #let命令で関数や変数を作ることができる．よく使う言い回しは変数にしておくと一括で変更するときに楽．
 
-次の #refKN() から #refKN(at:<second>) まで, 最も適当なものを選択肢欄の１〜４の中から選べ．
+次の #refKN() から #refKN(at:<second>) まで, 最も適当なものを選択肢欄の 1〜4 の中から選べ．
 
 #mondai[
 #lorem(10)
@@ -324,6 +334,8 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
 ]
 //引数answerで正答番号，pointで点数を指定する．
 //choiceで選択肢欄を作ることができる．
+
+#answer-mode-only[解答を表示するとき専用のメモ．問題には表示できないメモ書きなどに利用]
 
 #mondai[
  #Q_underline(label:"y")[あいうえお]という．そうすると#Q_box(label:"x")は日本国憲法を発布した．
@@ -340,7 +352,7 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
 //headeingにはラベルがつけられる
 
 
-#refKN(at:<second>,add:1) から #refKN(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．
+#refKN(at:<second>,add:1) から #refKN(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．ただし #refKN(mode:"")#refKN(mode:"") は二桁の数字を表す．
 //headingにつけるラベルでその位置での最新の問題番号を参照する. 引数addで番号を足す.
 
 
@@ -352,18 +364,14 @@ $
 //セット採点の場合は引数patternを最後以外は2, 最後を8にする．得点は最後以外を0にする
 
 ただし #refku("z") には偶数が入る．//番号を再利用し，それとわかるようにするには`#refku`を用いる．ラベルを用いて参照できる．#refKN("z")ならそのまま再利用．
-
-
 ]
-
 
 #mondai[
-1〜6までの数字の中から偶数を３つ選びなさい
+1〜6 までの数字の中から偶数を３つ選びなさい
 
-#kuran(answer:2,pattern:1, point:2)#kuran(answer:4, pattern:1, point:2)#kuran(answer:6, pattern:9, point:2)
+#kuran(answer:2,pattern:1, point:2) #kuran(answer:4, pattern:1, point:2) #kuran(answer:6, pattern:9, point:2)
 //順不同の場合は引数patternを最後以外を1, 最後を9にする．得点は最後のものが１個あたりの点数として採用される．
 ]
-
 
 #mondai[
   #let newul(label:none,body) = Q_underline(label:none,numbering-style:"A",body)
@@ -373,6 +381,7 @@ $
   #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)
   #kuran(answer:3,point:0,pattern:2)#kuran(answer:9,point:8, pattern:8)
 ]
+
 
 
 
