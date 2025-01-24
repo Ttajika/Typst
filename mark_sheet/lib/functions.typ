@@ -9,7 +9,7 @@
 #let mark-widhth = 10pt //マーク欄の楕円の幅
 #let mark-weight = 500 //設問欄のフォントのウェイト
 #let ID_num = 7 //学籍番号の桁数
-#let kuran-width = 1.5em //空欄の幅
+#let kuran-width = 1.4em //空欄の幅
 //Typstはグローバル変数が基本的に使えないので，カウンターをグローバル変数のように扱う.
 
 //塗りつぶしの色設定
@@ -144,7 +144,7 @@
 //問題番号の形の設定
 #let kuranbox(body,
               width:kuran-width, //空欄の幅
-              height: 1.0em, //空欄の高さ
+              height: 1.2em, //空欄の高さ
               stroke:"default",
               x:0
               ) = box(
@@ -273,23 +273,25 @@
 //番号付き下線と番号付き空欄は番号カウンターが共通
 
 //自動連番番号付き下線
-#let Q_underline(label:none,
+#let Q_underline(label:none,//参照用ラベル
                   numbering-style:"ア",
+                  offset:auto, //下線をベースラインからいくらずらすか
+                  stroke:auto, //線の装飾
                   body) = {
   counter("toi").step()
   context{
-    text(size:0.7em)[(#numbering(numbering-style,counter("toi").get().at(0)))]+underline(body)
+    text(size:0.7em)[(#numbering(numbering-style,counter("toi").get().at(0)))]+underline(body,offset:offset,stroke:stroke)
     if label != none {
-      counter("toi"+label).update(counter("toi").get().at(0))
-      counter("toi"+label+"kind").update(1)
-      }
+        counter("toi"+label).update(counter("toi").get().at(0))
+        counter("toi"+label+"kind").update(1)
+    }
   }
 }
 
 //自動連番番号付き欄
-#let Q_box(label:none,
+#let Q_box(label:none, //参照用ラベル
            numbering-style:"ア"
-          ) = {
+           ) = {
   counter("toi").step()
   context[
     #box(height:12pt,width:15pt, stroke:1pt,baseline: 1pt)[#align(center+horizon)[#text(size:0.8em)[#numbering(numbering-style,counter("toi").get().at(0))]]]
@@ -308,12 +310,12 @@
     context{
       let kind = counter("toi"+label+"kind").get().at(0)
       if kind == 1 {kasen} else if kind == 2 {kuran}
-      numbering(numbering-style,counter("toi"+label).get().at(0))
-    } 
+        numbering(numbering-style,counter("toi"+label).get().at(0))
+      } 
 }
 
 //選択肢ボックス    
-#let choice(candidate, //選択肢ボックスの選択肢の配列
+#let choicebox(candidate, //選択肢ボックスの選択肢の配列
       row:1, //列数
       row-size:auto //列のサイズ
       ) = {
@@ -431,6 +433,11 @@
 
 #let sample-exam = {
   [```typst
+#import "lib/template.typ":* //マークシートのテンプレートを読み込む
+#import "@preview/cetz:0.3.1" //図を描くためのパッケージ
+#import "@preview/rexllent:0.2.3": xlsx-parser //excelの表を取り込む機能
+
+//以下でマークシート用テンプレートの設定を行う
 #show: project.with(
   N:75, //問題数
   body-font:("New Computer Modern", "Harano Aji Mincho"), //本文フォント
@@ -462,7 +469,7 @@
 #lorem(10)
 #sentaku 
 //blockで囲う
-#block(kuran(answer:3,point:2)+  choice(("アレイ", "牛", "イオン", "たぬき")))
+#block(kuran(answer:3,point:2)+  choicebox(("アレイ", "牛", "イオン", "たぬき")))
 ]
 //引数answerで正答番号，pointで点数を指定する．
 //choiceで選択肢欄を作ることができる．
@@ -473,7 +480,7 @@
  #Q_underline(label:"y")[あいうえお]という．そうすると#Q_box(label:"x")は日本国憲法を発布した．
 #ref_Q("y")と#ref_Q("x")について，#sentaku 
 
-#block[#kuran(answer:1,point:3)#choice(row:2,([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
+#block[#kuran(answer:1,point:3)#choicebox(row:2,([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
 #lorem(5)
 ]))
 ]]
@@ -507,13 +514,12 @@ $
 
 #mondai[
   #let newul(label:none,body) = Q_underline(label:none,numbering-style:"A",body)
-  //#letを使って命令を新しく作ることができます. この場合は番号の書式を変更して，番号付き下線を新しく定義し直しています．
+  //#letを使って命令を新しく作ることができます．この場合は番号の書式を変更して，番号付き下線を新しく定義し直しています．
   #newul[２つの二桁の数字を選んでください]. 空欄や下線部に振る数字・文字は変えることができます．
   
   #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)
   #kuran(answer:3,point:0,pattern:2)#kuran(answer:9,point:8, pattern:8)
 ]
-
 
 
 

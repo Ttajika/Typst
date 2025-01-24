@@ -36,7 +36,7 @@
 #lorem(10)
 #sentaku 
 //blockで囲う
-#block(kuran(answer:3,point:2)+  choice(("アレイ", "牛", "イオン", "たぬき")))
+#block(kuran(answer:3,point:2)+  choicebox(("アレイ", "牛", "イオン", "たぬき")))
 ]
 //引数answerで正答番号，pointで点数を指定する．
 //choiceで選択肢欄を作ることができる．
@@ -47,7 +47,7 @@
  #Q_underline(label:"y")[あいうえお]という．そうすると#Q_box(label:"x")は日本国憲法を発布した．
 #ref_Q("y")と#ref_Q("x")について，#sentaku 
 
-#block[#kuran(answer:1,point:3)#choice(row:2,([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
+#block[#kuran(answer:1,point:3)#choicebox(row:2,([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
 #lorem(5)
 ]))
 ]]
