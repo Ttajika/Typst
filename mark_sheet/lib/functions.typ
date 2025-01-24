@@ -327,15 +327,15 @@
   [#box(stroke:1pt,inset:1em, grid(align:horizon,columns:col,rows:row-size,row-gutter: 1em,..narray))]
 }
 
-//解答欄番号の参照
-#let refKN(label:none,
-          mode:none,
-          n:1,
-          numbering-style:def-numbering-style,
-          at:none,
+//設問番号の参照
+#let refKN(label:none, //参照する設問番号のラベル
+          mode:none, //モード: "f"で最終番号, ""で番号なしの欄を出力
+          n:1, //指定した番号を出力
+          numbering-style:def-numbering-style, //ナンバリング方法
+          at:none, //見出しなどにつけたラベルの時点での最新の設問番号を出力する
           stroke:"default",
-          width:kuran-width,
-          add:0
+          width:kuran-width, //空欄の幅
+          add:0, //nやlabelで指定した番号にaddの分だけ数字を足す.
           ) = {
   context{
     let num = {if mode == none and label == none and at == none {n}
@@ -348,15 +348,17 @@
       stroke:stroke,
       width:width)[
         #text(font:mark-font, weight: mark-weight)[
-          #if mode != "" {numbering(numbering-style,num) 
+          #if mode != "" {numbering(numbering-style,num) //mode""でなければnumで指定した番号を出力する
         }
       ]
     ] 
   }
 }
 
-//自動連番問題
-#let mondai(body,name:"問題") = {
+//自動連番問題. 小問の番号付に用いる. 引数 nameで題を変更できる.
+#let mondai(body,
+            name:"問題"
+            ) = {
   counter("mondai").step()
   block(width:100%)[#context[#strong[#name #numbering("1.",counter("mondai").get().at(0))]
   #body 
