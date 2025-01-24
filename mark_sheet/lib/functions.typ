@@ -193,12 +193,17 @@
           place(dx:3%,dy:-84%,box(fill:black,inset:1.5pt,text(fill:red.lighten(60%), weight: 700, size:1.2em, font:mark-font)[#answer]  ))
           } //解答を挿入
     ]
+    
     if answer != none {counter("kuran-"+str(num)).update(answer)} //設問番号のカウンターに回答を代入
+    
     if label != none {counter("kuran-"+label+"-tx").update(num)} //ラベル用のカウンターに現在の設問番号を代入
+    
     if point != none {counter("kuran-"+str(num)+"point").update(point)} //配点記録用設問番号のカウンターに配点を代入
     counter("kuran-"+str(num)+"pattern").update(pattern)
   }
+  
   if pattern == 9 or pattern == 8 {counter("kuran-set-inpo").step()} //セット問題や順不同問題が閉じられると番号を増やす
+
 }
 
 //解答を表示するときのみ表示するコンテンツ
@@ -219,37 +224,43 @@
 
 //正答・配点欄
 #let kaitoran(numbering-style:def-numbering-style,
-              answers,
-              points,
-              patterns,
-              show-answer,
-              show-point,
-              total-points
+              answers, //正答の配列
+              points, //配点の配列
+              patterns, //採点パターンの配列
+              show-answer, //解答を表示するかどうか
+              show-point, //配点を表示するかどうか
+              total-points //合計点
               ) = {
   context{
-    let pattern-search-s = () //順不同 or セット採点始まり
-    let pattern-search-m = () //順不同 or セット採点の真ん中
-    let pattern-search-l = () //順不同 or セット採点終わり
+    let pattern-search-s = () //順不同 or セット採点始まりの設問番号を配列として取得
+    let pattern-search-m = () //順不同 or セット採点の真ん中の設問番号を配列として取得
+    let pattern-search-l = () //順不同 or セット採点終わりの設問番号を配列として取得
     let tab = ()
-    let total-number = counter("kuran").get().at(0)
+    let total-number = counter("kuran").get().at(0) //kuran命令で作成された設問の数を取得
     for num in range(total-number){
-    tab.push([#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num+1) ]]) //設問番号
-    tab.push([#if show-answer {answers.at(num)}]) //正答
-    tab.push(
-      [#if show-point {if patterns.at(num) != 2 {[#points.at(num)]} } //セット採点の場合は配点を記入しない
-                       #if  patterns.at(num) == 9 {h(1fr)+text(0.5em)[(順不同)]
-                          } else if patterns.at(num) == 8 {text(0.5em)[#h(1fr) (セット)]}
-                        
-      ]
-      ) //配点
-    //順不同やセット採点がどこから始まって，どこで終わるのかを調べる
-    if num > 0 and (patterns.at(num)*patterns.at(num -1 ) == 1 or patterns.at(num) * patterns.at(num -1) == 4) {pattern-search-m.push(num)}
-    else  if patterns.at(num) == 1 or patterns.at(num) == 2 {pattern-search-s.push(num)}
-    if patterns.at(num) == 8 or patterns.at(num) == 9 {pattern-search-l.push(num)}  
+      tab.push([#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num+1) ]]) //設問番号
+      tab.push([#if show-answer {answers.at(num)}]) //正答
+      tab.push(
+          [#if show-point {if patterns.at(num) != 2 {[#points.at(num)]} } //セット採点の場合は配点を記入しない
+                           #if  patterns.at(num) == 9 {h(1fr)+text(0.5em)[(順不同)]
+                              } else if patterns.at(num) == 8 {text(0.5em)[#h(1fr) (セット)]}   //順不同かセット採点なのかを表記          
+          ]
+        ) //配点
+      //順不同やセット採点がどこから始まって，どこで終わるのかを調べる
+      if num > 0 and (patterns.at(num)*patterns.at(num -1 ) == 1 or patterns.at(num) * patterns.at(num -1) == 4) {pattern-search-m.push(num)} //中間なら一個前も今も1 あるいは 2であるので積を調べる
+      else  if patterns.at(num) == 1 or patterns.at(num) == 2 {pattern-search-s.push(num)} //そうでない，かつ 1 or 2であればセット or 順不同の開始
+      if patterns.at(num) == 8 or patterns.at(num) == 9 {pattern-search-l.push(num)}  //8, or 9ならセット or 順不同の終了
     }
-    table(columns:(40pt,50pt,50pt),
+    table(
+          columns:(40pt,50pt,50pt), //列の幅
           //枠を，順不同採点やセット採点の初めはtopだけ，終わりはbottomだけ，真ん中はtopもbottomも枠を書かないようにする．
-          stroke: (x,y)=> {if x == 2 and pattern-search-m.contains(y -1 ) {( left:1pt, right:1pt)} else if x == 2 and pattern-search-s.contains(y - 1) {(top:1pt , left:1pt, right:1pt)} else if x == 2 and pattern-search-l.contains(y -1 ) {(left:1pt, right:1pt, bottom:1pt)}  else {1pt}},
+          stroke: (x,y)=> {
+            // x == 2は配点を表示する列
+            if x == 2 and pattern-search-m.contains(y - 1) {(left:1pt, right:1pt)} //真ん中
+            else if x == 2 and pattern-search-s.contains(y - 1) {(top:1pt, left:1pt, right:1pt)} //初め
+            else if x == 2 and pattern-search-l.contains(y - 1) {(left:1pt, right:1pt, bottom:1pt)} //終わり
+            else {1pt} //それ以外
+            }, 
           align:horizon,
           [設問],[正答],[配点], //ヘッダー
           ..tab, //設問，正答，配点を記入
@@ -302,18 +313,18 @@
 }
 
 //選択肢ボックス    
-#let choice(candidate,
-      row:1,
-      row-size:auto
+#let choice(candidate, //選択肢ボックスの選択肢の配列
+      row:1, //列数
+      row-size:auto //列のサイズ
       ) = {
-  let n = candidate.len()
-  let col = (14pt, 1fr)*int(n/row) 
-  let narray = ()
+  let n = candidate.len() //選択肢数を取得
+  let col = (14pt, 1fr)*int(n/row)  //列の幅を計算する
+  let narray = () 
   for i in range(n) {
-    narray.push(box[#ellipse(width: mark-widhth, height: mark-height, stroke:.5pt)[#align(center+horizon,)[#text(size:mark-size,top-edge: 0.7em,)[#numbering("1",i+1)]]]])
-    narray.push(candidate.at(i))
+    narray.push(box[#ellipse(width: mark-widhth, height: mark-height, stroke:.5pt)[#align(center+horizon,)[#text(size:mark-size,top-edge: 0.7em,)[#numbering("1",i+1)]]]]) //選択肢番号を出力
+    narray.push(candidate.at(i)) //選択肢を出力
   }
-  [#box(stroke:1pt,inset:1em,grid(align:horizon,columns:col,rows:row-size,row-gutter: 1em,..narray))]
+  [#box(stroke:1pt,inset:1em, grid(align:horizon,columns:col,rows:row-size,row-gutter: 1em,..narray))]
 }
 
 //解答欄番号の参照
