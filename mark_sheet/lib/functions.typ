@@ -1,16 +1,16 @@
 //デフォルトの設定
-#let choice = 10
+#let choice = 10 //解答欄の選択肢数
 #let response = ("0","1","2","3","4","5","6","7","8","9","A","K","P", "S", "D","E","F","H", "T")//学籍番号用
 #let dummy = ("A","A","A","A","A","A","A")
-#let def-numbering-style = "1"
-#let mark-font = ("Noto Sans CJK JP")
-#let mark-size = 8pt
-#let mark-height = 10pt
-#let mark-widhth = 10pt
-#let mark-weight = 500
+#let def-numbering-style = "1" //設問番号のナンバリング方法
+#let mark-font = ("Noto Sans CJK JP") //設問欄の数字のフォント
+#let mark-size = 8pt //マーク欄の文字のサイズ
+#let mark-height = 10pt //マーク欄の楕円の高さ
+#let mark-widhth = 10pt //マーク欄の楕円の幅
+#let mark-weight = 500 //設問欄のフォントのウェイト
 #let ID_num = 7 //学籍番号の桁数
-#let kuran-width = 1.5em
-
+#let kuran-width = 1.5em //空欄の幅
+//Typstはグローバル変数が基本的に使えないので，カウンターをグローバル変数のように扱う.
 
 //塗りつぶしの色設定
 #let filling(answer, i) = {
@@ -19,22 +19,39 @@
     else {return white}
   }
 
-//解答欄の塗りつぶし設定（answerと番号が合えば塗りつぶし，そうでなければ番号を出力）
-#let mark_ans(answer, col:black, size:mark-size,choice:choice) = {
+//正答マークシートの塗りつぶし設定（answerと番号が合えば塗りつぶし，そうでなければ番号を出力）
+#let mark_ans(answer, //正答番号
+              col:black, //枠の色
+              size:mark-size, //フォントのサイズ
+              choice:choice //選択肢数
+              ) = {
   for i in range(choice){
-    box[#ellipse(width: mark-widhth, height: mark-height, fill: filling(answer, i), stroke:.5pt+col)[#align(center+horizon,)[#text(size:size, top-edge: 0.7em, fill: if answer == i {black} else {black})[#i]]] ]+h(5pt)  
-  }
+    box[#ellipse(   //楕円を描画
+                  width: mark-widhth, //幅
+                  height: mark-height, //高さ
+                  fill: filling(answer, i), //塗りつぶしパターン，正答と番号が一致すれば黒，そうでなければ白
+                  stroke:.5pt+col //枠の線幅と色を指定
+                  )[
+                    #align(center+horizon,)[
+                      #text(size:size, top-edge: 0.7em, fill: if answer == i {black} else {black})[#i]]
+                      ] 
+                  ]+h(5pt) //次の楕円との間にスペースを開ける
+    }
 }
 
 //解答欄の表を作成するためのarrayを生成する
-#let mark_answer(answers, N, numbering-style:def-numbering-style,choice:choice) = {
-  let n = answers.len()
-  let question = ()
+#let mark_answer(answers, //回答の配列
+                N, //設問数
+                numbering-style:def-numbering-style, //設問のナンバリングの仕方
+                choice:choice, //選択肢数
+                ) = {
+  let n = answers.len() //解答がある設問の数を取得
+  let question = () //生成する配列を入れる空配列を作成
   for i in range(N) {
-    question.push(text(font:mark-font, size:10pt, weight:mark-weight)[#numbering(numbering-style,i+1)])
-    question.push(mark_ans( if i < n {answers.at(i)} else {},choice:choice))
+    question.push(text(font:mark-font, size:10pt, weight:mark-weight)[#numbering(numbering-style,i+1)]) //設問番号を表示
+    question.push(mark_ans( if i < n {answers.at(i)} else {},choice:choice)) //マーク欄を表示
   }
-  return question
+  return question //配列を出力，これを後で表に出力する
 }
 
 //FormScanner認識用の４隅の丸
@@ -44,56 +61,99 @@
 
 
 //学籍番号出力用の配列を作成
-#let IDs(dummy,response, ID_num:ID_num) = {
-let IDs = ()
-let num = ID_num
-let rnum = response.len()
-for i in range(rnum) {
-    IDs.push([#response.at(i)])
-  for j in range(num){
-    IDs.push(box[#ellipse(width: mark-widhth, height: mark-height, fill: filling(dummy.at(j), response.at(i)), stroke:.5pt)[#align(center+horizon,)[#text(size:mark-size,top-edge: 0.7em,fill: if dummy.at(j) == response.at(i) {black} else {black},response.at(i))]] ])  
-  }  
-}
-return IDs
+#let IDs(dummy, //塗りつぶす配列
+        response, //選択肢の配列
+        ID_num:ID_num, //学籍番号の桁数 
+        ) = {
+  let IDs = ()
+  let num = ID_num
+  let rnum = response.len()
+  for i in range(rnum) {
+      IDs.push([#response.at(i)])
+      for j in range(num){
+        IDs.push(box[#ellipse(width: mark-widhth, height: mark-height, fill: filling(dummy.at(j), response.at(i)), stroke:.5pt)[#align(center+horizon,)[#text(size:mark-size,top-edge: 0.7em,fill: if dummy.at(j) == response.at(i) {black} else {black},response.at(i))]] ])  
+      }  
+  }
+  return IDs
 }
 
 
 
 //学籍番号のマーク欄を生成
-#let studentID(dummy, response, ID_num:ID_num) = {
-let empty_set_array = ()
-for i in range(ID_num ) {
-  empty_set_array.push([])
-}
-
-return table(columns:ID_num + 1,[],align:center+horizon,table.cell(colspan: ID_num, align:center+horizon)[学籍番号],[#hide[x]],..empty_set_array,..IDs(dummy,response, ID_num:ID_num),[],table.cell(colspan: ID_num,stroke:(top:1pt, left:0pt))[],[],table.cell(colspan: ID_num,stroke:1pt,align:center)[氏名],[],table.cell(colspan: ID_num,stroke:1pt,align:center,rowspan:5)[#hide[氏名 ]],
-    stroke: (x,y) => {
-    if x == 0 {(left:0pt)}  
-    else if y <= 1 {1pt} else if x == 1 {(left:1pt)} else if x == ID_num {(right:1pt)} else  {(left:.5pt, right:.5pt)} 
-    if y >= response.len()+1 and x>=1 {(bottom:1pt)}  
-    }
-  )
+#let studentID(dummy, //塗りつぶす配列
+               response, //選択肢の配列
+               ID_num:ID_num, //学籍番号の桁数 
+               ) = {
+  let empty_set_array = ()
+  for i in range(ID_num ) { //学籍番号記入欄のための配列を作成する
+    empty_set_array.push([])
+  }
+  //以下でマーク欄の表を作成
+  return table(
+    columns:ID_num + 1,
+     
+    align:center+horizon,
+    [],table.cell(colspan: ID_num,stroke:(top:0pt, left:0pt))[#hide[#text(0.4em)[設問\ 番号]]],//高さ調整のための空行
+    [],table.cell(colspan: ID_num, align:center+horizon)[学籍番号], //「学籍番号」と表示する行
+    [#hide[x]],..empty_set_array, //記入欄
+    ..IDs(dummy,response, ID_num:ID_num), //マーク欄
+    [],table.cell(colspan: ID_num,stroke:(top:1pt, left:0pt))[], //空行
+    [],table.cell(colspan: ID_num,stroke:1pt,align:center)[氏名], //「氏名」と表示する行
+    [],table.cell(colspan: ID_num,stroke:1pt,align:center,rowspan:5)[#hide[氏名 ]], //氏名記入欄
+      stroke: (x,y) => {
+        if y == 0 {(top:0pt,left:0pt,bottom:0pt)}
+        else if x == 0 {(left:0pt)}  
+        else if y <= 2 and y>=1 {1pt} else if x == 1 {(left:1pt)} else if x == ID_num {(right:1pt)} else  {(left:.5pt, right:.5pt)} 
+        if y >= response.len()+2 and x>=1 {(bottom:1pt)}  
+      } //枠のルール
+    )
 }
 
 
 //マークシートを生成
-#let marked-sheet(answers:(), N:75, response:response, dummy:dummy, texts:"",choice:choice, ID_num:ID_num, numbering-style:def-numbering-style) = {
-
-  set page(paper:"a4",flipped: true, margin:(left:.5cm,right:.5cm, top:1.15cm, bottom:1.5cm), header: [ #maru #h(1fr) #text(size:15pt)[#texts] #h(1fr) #maru ], footer: [#maru #h(1fr) #maru ])
-  let n-columns = {
+#let marked-sheet(answers:(),　//回答の配列
+                  N:75, //表示する問題数
+                  response:response, //学籍番号の選択肢配列
+                  dummy:dummy, //学籍番号の塗りつぶし配列
+                  texts:"", //マークシート用紙の上部に記載するタイトル
+                  choice:choice, //設問の選択肢数
+                  ID_num:ID_num, //学籍番号の桁数
+                  numbering-style:def-numbering-style, //設問のナンバリングの方法 
+                  ) = {
+  set page( //ページのレイアウト設定
+      paper:"a4", //ページのサイズ
+      flipped: true, //横向きに
+      margin:(left:.5cm,right:.5cm, top:1.15cm, bottom:1.5cm), //余白
+      header: [#maru #h(1fr) #text(size:15pt)[#texts] #h(1fr) #maru ], //ヘッダーの両端に認識用の二重丸
+      footer: [#maru #h(1fr) #maru ])//フッターの両端に認識用の二重丸
+  let n-columns = {     //解答マーク欄の列数
      calc.ceil(N/25)   
   }
-  let column-size = (.5cm, 0.8fr)
-  for i in range(n-columns) {
-    column-size.push(1fr)
-  }
-  
-  align(center,block(width:95%)[#columns(n-columns+1, gutter:-0pt)[ #v(1.65em) #studentID(dummy,response, ID_num:ID_num)  #table(columns:(23pt,auto), stroke: (x,y) => {if y == 0 {(bottom:1pt)} else {1pt}} , align:center+horizon,table.header(text(0.4em)[解答\ 番号],[#mark_ans("", col:white, size:12pt,choice:choice)]),..mark_answer(answers, numbering-style:numbering-style, N,choice:choice))]])
 
+  align(center,block(width:95%)[ //blockで幅を抑え，認識用二重丸マークでマーク領域をうまく囲めるようにする
+    #columns(n-columns+1, gutter:-0pt)[ //マルチコラム. 列の数は解答マーク欄の列数と学籍番号
+    #studentID(dummy,response, ID_num:ID_num) //学籍番号マーク等
+    #table(
+      columns:(23pt,auto), //列の幅：設問番号と解答欄
+      stroke: (x,y) => {if y == 0 {(bottom:1pt)} else {1pt}},
+      align:center+horizon, 
+      table.header(text(0.4em)[設問\ 番号],[#mark_ans("", col:white, size:12pt,choice:choice)]), //解答マーク欄のヘッダー
+      ..mark_answer(answers, numbering-style:numbering-style, N,choice:choice))]]) //解答マーク欄
 }
 
 //問題番号の形の設定
-#let kuranbox(body,width:kuran-width, height: 1.0em, stroke:"default", x:0) = box(stroke: if stroke == "default"{ (thickness:1pt,dash: if x == 0 {"solid" } else {"dotted"})} else {stroke},width:width, height: height, baseline: 10%)[#align(center+horizon)[#body]]
+#let kuranbox(body,
+              width:kuran-width, //空欄の幅
+              height: 1.0em, //空欄の高さ
+              stroke:"default",
+              x:0
+              ) = box(
+                    stroke: if stroke == "default"{ (thickness:1pt,dash: if x == 0 {"solid" } else {"dotted"})} else {stroke},
+                    width:width,
+                    height: height,
+                    baseline: 10%)[
+                      #align(center+horizon)[#body]
+                      ]
 
 
 
@@ -104,101 +164,148 @@ return table(columns:ID_num + 1,[],align:center+horizon,table.cell(colspan: ID_n
   else if pattern == 1 or pattern == 9 {(paint:green.darken(50%), thickness:2pt  )}
 }
 
-//解答欄番号の設定
-#let kuran(numbering-style:def-numbering-style, label:none, answer:none, point:none, font:mark-font, pattern:0) = {
-  counter("kuran").step()
+//設問番号の設定
+#let kuran(
+          numbering-style:def-numbering-style, //設問番号のナンバリングの仕方
+          label:none, //設問番号の参照用ラベル
+          answer:none, //正答
+          point:none, //配点
+          font:mark-font, //マーク欄のフォント
+          pattern:0 //採点パターン
+          ) = {
+  counter("kuran").step() //設問番号を更新
   context{
-    let num = counter("kuran").get().at(0)
-    let show-answer = counter("showanswer").get().at(0)
+    let num = counter("kuran").get().at(0) //現在の設問番号を取得
+    let show-answer = counter("showanswer").get().at(0) //解答を表示するかどうかのカウンターを表示 1なら解答表示，0なら非表示.
+    //空欄の挿入
     kuranbox(stroke:if show-answer == 1 {arrange-stroke(pattern)} else {"default"}, width:kuran-width + .7em*show-answer )[
-    #align(if show-answer == 1{ right} else {center}, text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ])
-    #let k-set-inpo = (1,2,8,9)
-    #let k-set = (2,8)
-    #let k-inpo = (1,9)
-    #if show-answer == 1 and (k-set-inpo.contains(pattern)) {align(center)[#place(dx:0em,dy:0.3em,text(0.5em,fill:red.darken(50%), weight:700)[#if k-set.contains(pattern) {[セ]} #if k-inpo.contains(pattern){[順不]}#(counter("kuran-set-inpo").get().at(0)+1)])]}
-    #if show-answer == 1 {place(dx:3%,dy:-84%,box(fill:black,inset:1.5pt,text(fill:red.lighten(60%), weight: 700, size:1.2em, font:mark-font)[#answer]  ))}
+      #align(if show-answer == 1{ right} else {center}, text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ]) //設問番号を挿入
+      #let k-set-inpo = (1,2,8,9)
+      #let k-set = (2,8)
+      #let k-inpo = (1,9)
+      #if show-answer == 1 and (k-set-inpo.contains(pattern)) {
+          align(center)[#place(dx:0em,dy:0.3em,text(0.5em,fill:red.darken(50%), weight:700)[
+          #if k-set.contains(pattern) {[セ]} 
+          #if k-inpo.contains(pattern){[順不]}
+          #(counter("kuran-set-inpo").get().at(0)+1)])] //セット問題や順不同問題には番号をつける
+          }
+      #if show-answer == 1 {
+          place(dx:3%,dy:-84%,box(fill:black,inset:1.5pt,text(fill:red.lighten(60%), weight: 700, size:1.2em, font:mark-font)[#answer]  ))
+          } //解答を挿入
     ]
-    let num = counter("kuran").get().at(0)
-    if answer != none {counter("kuran-"+str(num)).update(answer)}
-    if label !=none {counter("kuran-"+label+"-tx").update(num)}
-    if point != none {counter("kuran-"+str(num)+"point").update(point)}
+    if answer != none {counter("kuran-"+str(num)).update(answer)} //設問番号のカウンターに回答を代入
+    if label != none {counter("kuran-"+label+"-tx").update(num)} //ラベル用のカウンターに現在の設問番号を代入
+    if point != none {counter("kuran-"+str(num)+"point").update(point)} //配点記録用設問番号のカウンターに配点を代入
     counter("kuran-"+str(num)+"pattern").update(pattern)
   }
-  if pattern == 9 or pattern == 8 {counter("kuran-set-inpo").step()}
+  if pattern == 9 or pattern == 8 {counter("kuran-set-inpo").step()} //セット問題や順不同問題が閉じられると番号を増やす
 }
 
-//
+//解答を表示するときのみ表示するコンテンツ
 #let answer-mode-only(body) = {
   context{if counter("showanswer").get().at(0) == 1 {block(stroke:red,inset:1pt,body)}}
 }
 
 //解答欄番号を再利用する場合の設定
-#let refku(numbering-style:def-numbering-style,label,  font:mark-font) = {
+#let refku(numbering-style:def-numbering-style, //ナンバリングの仕方
+          label,//参照するラベル
+          font:mark-font //フォント
+          ) = {
   context{
-  let num = counter("kuran-"+label+"-tx").get().at(0)
-  kuranbox(x:1)[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num)]]
-  }
+    let num = counter("kuran-"+label+"-tx").get().at(0) //ラベルで，そのラベルに代入された番号を取得
+    kuranbox(x:1)[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num)]]
+    }
 }
 
 //正答・配点欄
-#let kaitoran(numbering-style:def-numbering-style,answers, points, patterns, show-answer, show-point, total-points) = {
+#let kaitoran(numbering-style:def-numbering-style,
+              answers,
+              points,
+              patterns,
+              show-answer,
+              show-point,
+              total-points
+              ) = {
   context{
-  let pattern-search-s = () //順不同 or セット採点始まり
-  let pattern-search-m = ()
-  let pattern-search-l = () //順不同 or セット採点終わり
-  let tab = ()
-  let total-number = counter("kuran").get().at(0)
-  for num in range(total-number){
-  tab.push([#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num+1) ]])
-  tab.push([#if show-answer {answers.at(num)}])
-  tab.push([#if show-point {if patterns.at(num) != 2 {[#points.at(num)]}+ if  patterns.at(num) == 9 {h(1fr)+text(0.5em)[(順不同)]} else if patterns.at(num) == 8 {text(0.5em)[#h(1fr) (セット)]}}])
-  if num > 0 and (patterns.at(num)*patterns.at(num -1 ) == 1 or patterns.at(num) * patterns.at(num -1) == 4) {pattern-search-m.push(num)}
-  else  if patterns.at(num) == 1 or patterns.at(num) == 2 {pattern-search-s.push(num)}
-  if patterns.at(num) == 8 or patterns.at(num) == 9 {pattern-search-l.push(num)}
-  
-}
-table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.contains(y -1 ) {( left:1pt, right:1pt)} else if x == 2 and pattern-search-s.contains(y - 1) {(top:1pt , left:1pt, right:1pt)} else if x == 2 and pattern-search-l.contains(y -1 ) {(left:1pt, right:1pt, bottom:1pt)}  else {1pt}}, align:horizon,[設問],[正答],[配点],..tab,[計],[],[#total-points])
-}
+    let pattern-search-s = () //順不同 or セット採点始まり
+    let pattern-search-m = () //順不同 or セット採点の真ん中
+    let pattern-search-l = () //順不同 or セット採点終わり
+    let tab = ()
+    let total-number = counter("kuran").get().at(0)
+    for num in range(total-number){
+    tab.push([#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num+1) ]]) //設問番号
+    tab.push([#if show-answer {answers.at(num)}]) //正答
+    tab.push(
+      [#if show-point {if patterns.at(num) != 2 {[#points.at(num)]} } //セット採点の場合は配点を記入しない
+                       #if  patterns.at(num) == 9 {h(1fr)+text(0.5em)[(順不同)]
+                          } else if patterns.at(num) == 8 {text(0.5em)[#h(1fr) (セット)]}
+                        
+      ]
+      ) //配点
+    //順不同やセット採点がどこから始まって，どこで終わるのかを調べる
+    if num > 0 and (patterns.at(num)*patterns.at(num -1 ) == 1 or patterns.at(num) * patterns.at(num -1) == 4) {pattern-search-m.push(num)}
+    else  if patterns.at(num) == 1 or patterns.at(num) == 2 {pattern-search-s.push(num)}
+    if patterns.at(num) == 8 or patterns.at(num) == 9 {pattern-search-l.push(num)}  
+    }
+    table(columns:(40pt,50pt,50pt),
+          //枠を，順不同採点やセット採点の初めはtopだけ，終わりはbottomだけ，真ん中はtopもbottomも枠を書かないようにする．
+          stroke: (x,y)=> {if x == 2 and pattern-search-m.contains(y -1 ) {( left:1pt, right:1pt)} else if x == 2 and pattern-search-s.contains(y - 1) {(top:1pt , left:1pt, right:1pt)} else if x == 2 and pattern-search-l.contains(y -1 ) {(left:1pt, right:1pt, bottom:1pt)}  else {1pt}},
+          align:horizon,
+          [設問],[正答],[配点], //ヘッダー
+          ..tab, //設問，正答，配点を記入
+          [計],[],[#total-points] //合計点を記入
+        )
+  }
 }
 
 
-
+//番号付き下線と番号付き空欄は番号カウンターが共通
 
 //自動連番番号付き下線
-#let Q_underline(label:none,numbering-style:"ア",body) = {
+#let Q_underline(label:none,
+                  numbering-style:"ア",
+                  body) = {
   counter("toi").step()
   context{
-  text(size:0.7em)[(#numbering(numbering-style,counter("toi").get().at(0)))]+underline(body)
-  if label != none {
-    counter("toi"+label).update(counter("toi").get().at(0))
-    counter("toi"+label+"kind").update(1)
-    }
-}
+    text(size:0.7em)[(#numbering(numbering-style,counter("toi").get().at(0)))]+underline(body)
+    if label != none {
+      counter("toi"+label).update(counter("toi").get().at(0))
+      counter("toi"+label+"kind").update(1)
+      }
+  }
 }
 
 //自動連番番号付き欄
-#let Q_box(label:none,numbering-style:"ア") = {
+#let Q_box(label:none,
+           numbering-style:"ア"
+          ) = {
   counter("toi").step()
   context[
-  #box(height:12pt,width:15pt, stroke:1pt,baseline: 1pt)[#align(center+horizon)[#text(size:0.8em)[#numbering(numbering-style,counter("toi").get().at(0))]]]
-  #if label != none {
-      counter("toi"+label).update(counter("toi").get().at(0))
-      counter("toi"+label+"kind").update(2) 
+    #box(height:12pt,width:15pt, stroke:1pt,baseline: 1pt)[#align(center+horizon)[#text(size:0.8em)[#numbering(numbering-style,counter("toi").get().at(0))]]]
+    #if label != none {
+        counter("toi"+label).update(counter("toi").get().at(0))
+        counter("toi"+label+"kind").update(2) 
       }
   ]
 }
 
-//下線・欄の参照
-#let ref_Q(label,numbering-style:"ア") = {
-  context{
-    let kind = counter("toi"+label+"kind").get().at(0)
-    if kind == 1 {"下線部"} else if kind == 2 {"空欄"}
-    numbering(numbering-style,counter("toi"+label).get().at(0))
+//下線・欄の参照. 下線か空欄かは自動で判別できるようにする
+#let ref_Q(label,
+          numbering-style:"ア",
+          kasen:"下線部",
+          kuran:"空欄") = {
+    context{
+      let kind = counter("toi"+label+"kind").get().at(0)
+      if kind == 1 {kasen} else if kind == 2 {kuran}
+      numbering(numbering-style,counter("toi"+label).get().at(0))
     } 
-    }
+}
 
 //選択肢ボックス    
-#let choice(candidate, row:1, row-size:auto) = {
+#let choice(candidate,
+      row:1,
+      row-size:auto
+      ) = {
   let n = candidate.len()
   let col = (14pt, 1fr)*int(n/row) 
   let narray = ()
@@ -206,18 +313,34 @@ table(columns:(40pt,50pt,50pt), stroke: (x,y)=> {if x == 2 and pattern-search-m.
     narray.push(box[#ellipse(width: mark-widhth, height: mark-height, stroke:.5pt)[#align(center+horizon,)[#text(size:mark-size,top-edge: 0.7em,)[#numbering("1",i+1)]]]])
     narray.push(candidate.at(i))
   }
-  [#box(stroke:1pt,inset:1em,grid(align:horizon,columns:col,rows:row-size,row-gutter: 1em,..narray))]}
+  [#box(stroke:1pt,inset:1em,grid(align:horizon,columns:col,rows:row-size,row-gutter: 1em,..narray))]
+}
 
 //解答欄番号の参照
-#let refKN(label:none, mode:none, n:1, numbering-style:def-numbering-style, at:none, stroke:"default", width:kuran-width, add:0) = {
+#let refKN(label:none,
+          mode:none,
+          n:1,
+          numbering-style:def-numbering-style,
+          at:none,
+          stroke:"default",
+          width:kuran-width,
+          add:0
+          ) = {
   context{
-  let num = {if mode == none and label == none and at == none {n}
-              else if at != none {counter("kuran").at(at).at(0)+add}
-              else if label != none {counter("kuran-"+label+"-tx").final().at(0)+add}
-              else if mode == "f" {counter("kuran").final().at(0)}
-              else if mode == "" {}
+    let num = {if mode == none and label == none and at == none {n}
+                else if at != none {counter("kuran").at(at).at(0)+add}
+                else if label != none {counter("kuran-"+label+"-tx").final().at(0)+add}
+                else if mode == "f" {counter("kuran").final().at(0)}
+                else if mode == "" {}
               }
-  kuranbox(stroke:stroke, width:width)[#text(font:mark-font, weight: mark-weight)[#if mode != ""{numbering(numbering-style,num) }]] 
+    kuranbox(
+      stroke:stroke,
+      width:width)[
+        #text(font:mark-font, weight: mark-weight)[
+          #if mode != "" {numbering(numbering-style,num) 
+        }
+      ]
+    ] 
   }
 }
 

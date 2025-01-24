@@ -2,6 +2,7 @@
 #import "@preview/cetz:0.3.1" //図を描くためのパッケージ
 #import "@preview/rexllent:0.2.3": xlsx-parser //excelの表を取り込む機能
 
+//以下でマークシート用テンプレートの設定を行う
 #show: project.with(
   N:75, //問題数
   body-font:("New Computer Modern", "Harano Aji Mincho"), //本文フォント
