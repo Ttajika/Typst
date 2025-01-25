@@ -582,6 +582,7 @@
 
 ]}
 
+#let kuran = setmon
 
 #let sample-exam = {
   [```typst

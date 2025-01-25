@@ -47,7 +47,9 @@
 #lorem(10)
 #sentaku 
 //blockで囲う
-#block(setmon(answer:3,point:2)+  choicebox(("アレイ", "牛", "イオン", "たぬき")))
+#block(
+  setmon(answer:3,point:2)+choicebox(("アレイ", "牛", "イオン", "たぬき"))
+  )
 ]
 //引数answerで正答番号，pointで点数を指定する．
 //choiceで選択肢欄を作ることができる．
@@ -58,9 +60,10 @@
  #Qunderline(label:"y")[あいうえお]という．そうすると#Qbox(label:"x")は日本国憲法を発布した．#Qparen()
 #Qref("y")と#Qref("x")について，#sentaku 
 
-#block[#setmon(answer:1,point:3)#choicebox(row:2,([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
-#lorem(5)
-]))
+#block[#setmon(answer:1,point:3)#choicebox(row:2,
+([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
+#lorem(5)])
+)
 ]]
 //choiceboxで選択肢欄はrowに数を指定すると行数を変えることができる．
 
@@ -98,6 +101,7 @@ $
   #setmon(answer:8,point:0,pattern:2)#setmon(answer:1,point:0,pattern:2)
   #setmon(answer:3,point:0,pattern:2)#setmon(answer:9,point:8, pattern:8)
 ]
+
 
 #pagebreak()
 サンプル問題のTypstコード
