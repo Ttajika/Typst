@@ -32,13 +32,13 @@
 
 
 
-次の #kuref() から #kuref(at:<second>) まで, 最も適当なものを選択肢欄の#choicelist(4)の中から選べ．
+次の #monref() から #monref(at:<second>) まで, 最も適当なものを選択肢欄の#choicelist(4)の中から選べ．
 
 #mondai[
 #lorem(10)
 #sentaku 
 //blockで囲う
-#block(kuran(answer:3,point:2)+  choicebox(("アレイ", "牛", "イオン", "たぬき")))
+#block(setmon(answer:3,point:2)+  choicebox(("アレイ", "牛", "イオン", "たぬき")))
 ]
 //引数answerで正答番号，pointで点数を指定する．
 //choiceで選択肢欄を作ることができる．
@@ -49,7 +49,7 @@
  #Qunderline(label:"y")[あいうえお]という．そうすると#Qbox(label:"x")は日本国憲法を発布した．#Qparen()
 #Qref("y")と#Qref("x")について，#sentaku 
 
-#block[#kuran(answer:1,point:3)#choicebox(row:2,([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
+#block[#setmon(answer:1,point:3)#choicebox(row:2,([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
 #lorem(5)
 ]))
 ]]
@@ -60,24 +60,24 @@
 //headeingにはラベルがつけられる
 
 
-#kuref(at:<second>,add:1) から #kuref(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．ただし #kuref(mode:"")#kuref(mode:"") は二桁の数字を表す．
+#monref(at:<second>,add:1) から #monref(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．ただし #monref(mode:"")#monref(mode:"") は二桁の数字を表す．
 //headingにつけるラベルでその位置での最新の問題番号を参照する. 引数addで番号を足す.
 
 
 #mondai[
 次の計算をしなさい．
 $
-sum_(x=1)^oo 1/x^2 = pi^#kuran(answer:2,point:0, pattern:2)/#kuran(answer:6, point:8,pattern:8,label:"z")
+sum_(x=1)^oo 1/x^2 = pi^#setmon(answer:2,point:0, pattern:2)/#setmon(answer:6, point:8,pattern:8,label:"z")
 $
 //セット採点の場合は引数patternを最後以外は2, 最後を8にする．得点は最後以外を0にする
 
-ただし #kuref(label:"z",stroke: (dash:"dotted", thickness:.5pt)) には偶数が入る．
+ただし #monref(label:"z",stroke: (dash:"dotted", thickness:.5pt)) には偶数が入る．
 ]
 
 #mondai[
 1〜6 までの数字の中から偶数を3つ選びなさい
 
-#kuran(answer:2,pattern:1, point:2) #kuran(answer:4, pattern:1, point:2) #kuran(answer:6, pattern:9, point:2)
+#setmon(answer:2,pattern:1, point:2) #setmon(answer:4, pattern:1, point:2) #setmon(answer:6, pattern:9, point:2)
 //順不同の場合は引数patternを最後以外を1, 最後を9にする．得点は最後のものが１個あたりの点数として採用される．
 ]
 
@@ -86,8 +86,8 @@ $
   //#letを使って命令を新しく作ることができます．この場合は番号の書式を変更して，番号付き下線を新しく定義し直しています．
   #newul[２つの二桁の数字を選んでください]. 空欄や下線部に振る数字・文字は変えることができます．
   
-  #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)
-  #kuran(answer:3,point:0,pattern:2)#kuran(answer:9,point:8, pattern:8)
+  #setmon(answer:8,point:0,pattern:2)#setmon(answer:1,point:0,pattern:2)
+  #setmon(answer:3,point:0,pattern:2)#setmon(answer:9,point:8, pattern:8)
 ]
 
 #pagebreak()

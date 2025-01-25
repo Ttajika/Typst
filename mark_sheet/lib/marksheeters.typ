@@ -115,7 +115,7 @@
     [],table.cell(colspan: ID_num, align:center+horizon)[学籍番号], //「学籍番号」と表示する行
     [#hide[x]],..empty_set_array, //記入欄
     ..IDs(dummy,response, ID_num:ID_num), //マーク欄
-    [],table.cell(colspan: ID_num,stroke:(top:1pt, left:0pt))[], //空行
+    [#hide[x]],table.cell(colspan: ID_num,stroke:(top:1pt, left:0pt))[], //空行
     [],table.cell(colspan: ID_num,stroke:1pt,align:center)[氏名], //「氏名」と表示する行
     [],table.cell(colspan: ID_num,stroke:1pt,align:center,rowspan:5)[#hide[氏名 ]], //氏名記入欄
       stroke: (x,y) => {
@@ -128,15 +128,32 @@
 }
 
 
-//マークシートを生成
-#let marked-sheet(answers:(),　//回答の配列
-                  N:75, //表示する問題数
-                  response:response, //学籍番号の選択肢配列
-                  dummy:dummy, //学籍番号の塗りつぶし配列
-                  texts:"", //マークシート用紙の上部に記載するタイトル
-                  choice:choice, //設問の選択肢数
-                  ID_num:ID_num, //学籍番号の桁数
-                  numbering-style:def-numbering-style, //設問のナンバリングの方法 
+///マークシートを生成
+///-> content
+#let marked-sheet(///塗りつぶす番号の配列
+                  ///->array
+                  answers:(),　
+                  ///表示する問題数
+                  ///-> int
+                  N:75, 
+                  ///学籍番号の選択肢配列
+                  ///-> array
+                  response:response, 
+                  ///学籍番号の塗りつぶし配列
+                  ///-> array
+                  dummy:dummy,
+                  ///マークシート用紙の上部に記載するタイトル
+                  ///-> str|content
+                  texts:"", 
+                  ///設問の選択肢数
+                  ///-> int
+                  choice:choice,
+                  ///学籍番号の桁数
+                  ///-> int
+                  ID_num:ID_num, 
+                  ///設問のナンバリングの方法 
+                  ///-> str
+                  numbering-style:def-numbering-style, 
                   ) = {
   set page( //ページのレイアウト設定
       paper:"a4", //ページのサイズ
@@ -188,10 +205,10 @@
 
 ///設問番号の設定
 ///```example
-///#kuran(answer:2, point:4)
+///#setmon(answer:2, point:4)
 /// ```
 ///-> content 
-#let kuran(
+#let setmon(
           /// 設問番号のナンバリングの仕方
           ///-> str
           numbering-style:def-numbering-style, 
@@ -465,7 +482,7 @@
 
 
 ///設問番号の参照
-#let kuref(label:none, //参照する設問番号のラベル
+#let monref(label:none, //参照する設問番号のラベル
           mode:none, //モード: "f"で最終番号, ""で番号なしの欄を出力
           n:1, //指定した番号を出力
           numbering-style:def-numbering-style, //ナンバリング方法
@@ -507,8 +524,8 @@
   [#heading(numbering: none)[コマンドヘルプ]
 作りかけです.
 
-- ```typst #kuran(answer:整数, point:整数, pattern:整数, numbering-style:文字列)```
-    - 問番号の欄 #kuran()を作成する．番号は自動連番される．
+- ```typst #setmon(answer:整数, point:整数, pattern:整数, numbering-style:文字列)```
+    - 問番号の欄 #setmon()を作成する．番号は自動連番される．
     - 引数（省略時はデフォルトが採用される）
           - `answer`：正答番号. ここに記入すれば正答マークシートに反映される
           - `point` ： 配点．ここに記入すれば配点マークシートに反映される
@@ -568,10 +585,6 @@
 
 #let sample-exam = {
   [```typst
-//例
-
-//例
-
 #import "lib/template.typ":* //マークシートのテンプレートを読み込む
 #import "@preview/cetz:0.3.1" //図を描くためのパッケージ
 #import "@preview/rexllent:0.2.3": xlsx-parser //excelの表を取り込む機能
@@ -604,13 +617,13 @@
 
 
 
-次の #kuref() から #kuref(at:<second>) まで, 最も適当なものを選択肢欄の#choicelist(4)の中から選べ．
+次の #monref() から #monref(at:<second>) まで, 最も適当なものを選択肢欄の#choicelist(4)の中から選べ．
 
 #mondai[
 #lorem(10)
 #sentaku 
 //blockで囲う
-#block(kuran(answer:3,point:2)+  choicebox(("アレイ", "牛", "イオン", "たぬき")))
+#block(setmon(answer:3,point:2)+  choicebox(("アレイ", "牛", "イオン", "たぬき")))
 ]
 //引数answerで正答番号，pointで点数を指定する．
 //choiceで選択肢欄を作ることができる．
@@ -621,7 +634,7 @@
  #Qunderline(label:"y")[あいうえお]という．そうすると#Qbox(label:"x")は日本国憲法を発布した．#Qparen()
 #Qref("y")と#Qref("x")について，#sentaku 
 
-#block[#kuran(answer:1,point:3)#choicebox(row:2,([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
+#block[#setmon(answer:1,point:3)#choicebox(row:2,([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
 #lorem(5)
 ]))
 ]]
@@ -632,24 +645,24 @@
 //headeingにはラベルがつけられる
 
 
-#kuref(at:<second>,add:1) から #kuref(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．ただし #kuref(mode:"")#kuref(mode:"") は二桁の数字を表す．
+#monref(at:<second>,add:1) から #monref(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．ただし #monref(mode:"")#monref(mode:"") は二桁の数字を表す．
 //headingにつけるラベルでその位置での最新の問題番号を参照する. 引数addで番号を足す.
 
 
 #mondai[
 次の計算をしなさい．
 $
-sum_(x=1)^oo 1/x^2 = pi^#kuran(answer:2,point:0, pattern:2)/#kuran(answer:6, point:8,pattern:8,label:"z")
+sum_(x=1)^oo 1/x^2 = pi^#setmon(answer:2,point:0, pattern:2)/#setmon(answer:6, point:8,pattern:8,label:"z")
 $
 //セット採点の場合は引数patternを最後以外は2, 最後を8にする．得点は最後以外を0にする
 
-ただし #kuref(label:"z",stroke: (dash:"dotted", thickness:.5pt)) には偶数が入る．
+ただし #monref(label:"z",stroke: (dash:"dotted", thickness:.5pt)) には偶数が入る．
 ]
 
 #mondai[
 1〜6 までの数字の中から偶数を3つ選びなさい
 
-#kuran(answer:2,pattern:1, point:2) #kuran(answer:4, pattern:1, point:2) #kuran(answer:6, pattern:9, point:2)
+#setmon(answer:2,pattern:1, point:2) #setmon(answer:4, pattern:1, point:2) #setmon(answer:6, pattern:9, point:2)
 //順不同の場合は引数patternを最後以外を1, 最後を9にする．得点は最後のものが１個あたりの点数として採用される．
 ]
 
@@ -658,26 +671,13 @@ $
   //#letを使って命令を新しく作ることができます．この場合は番号の書式を変更して，番号付き下線を新しく定義し直しています．
   #newul[２つの二桁の数字を選んでください]. 空欄や下線部に振る数字・文字は変えることができます．
   
-  #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)
-  #kuran(answer:3,point:0,pattern:2)#kuran(answer:9,point:8, pattern:8)
+  #setmon(answer:8,point:0,pattern:2)#setmon(answer:1,point:0,pattern:2)
+  #setmon(answer:3,point:0,pattern:2)#setmon(answer:9,point:8, pattern:8)
 ]
 
-#pagebreak()
-サンプル問題のTypstコード
 
 
 
-
-#sample-exam
-
-
-//本文はここまで
-
-
-#sample-exam
-
-
-//本文はここまで
 
 
 

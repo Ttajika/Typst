@@ -8,7 +8,7 @@
 #let docs = tidy.parse-module(
                             read("marksheeters.typ"),
                             name:"Marksheeter",
-                            scope:(kuran:kuran, )
+                            scope:(setmon:setmon, )
                             
                            )
 #tidy.show-module(docs, style: tidy.styles.default)
