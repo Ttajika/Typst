@@ -102,7 +102,20 @@ $
   #setmon(answer:3,point:0,pattern:2)#setmon(answer:9,point:8, pattern:8)
 ]
 
+#mondai[まとめて作成
 
+セット問題 #setmons(answers:(2,3,4),pattern:"set", point:3,space:4pt) 
+順不同
+#setmons(answers:(2,3,4),pattern:"npo", point:2,space:4pt) 
+
+
+配列として設問を作成
+#let array = setmons(answers:(9,0,3),pattern:"set", point:4,space:4pt,mode:"array")
+
+$
+#array.at(0) = 2 #array.at(1) + 3 #array.at(2)
+$
+]
 #pagebreak()
 サンプル問題のTypstコード
 

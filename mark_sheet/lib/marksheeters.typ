@@ -479,6 +479,80 @@
   mark-shape(text(size:mark-size,top-edge: 0.7em,)[#numbering("1",start + n - 1)])
 }
 
+///複数の設問
+///-> content
+#let setmons(
+              ///設問数
+              ///-> int|auto
+              n:auto,
+              answers:(),
+              point:0,
+              pattern:0,
+              space:0pt,
+              mode:""
+              ) = {
+  let num = 0
+  if n == auto {
+     num = answers.len()
+    
+  } else {num = n}
+  let patterns(pattern) = {
+    let result = ()
+    if pattern == 0 {
+      for i in range(num) {
+        result.push(0)
+      }
+      return result
+    } else if pattern == "set" {
+      for i in range(num) {
+        if i < num -1 {
+          result.push(2)
+        } else {result.push(8)}
+      }
+      return result
+    } else if pattern == "npo" {
+      for i in range(num) {
+       if i < num -1 {
+          result.push(1)
+        } else {result.push(9)}
+      }
+      return result
+    }
+    }
+  let points(pattern) = {
+    let result = ()
+    if pattern == 0 {
+      for i in range(num) {
+        result.push(point)
+      }
+      return result
+    } else if pattern == "set" {
+      for i in range(num) {
+        if i < num -1 {
+          result.push(0)
+        } else {result.push(point)}
+      }
+      return result
+    } else if pattern == "npo" {
+      for i in range(num) {
+       if i < num -1 {
+          result.push(point)
+        } else {result.push(point)}
+      }
+      return result
+    }
+  }  
+  
+  let arrays = ()
+  for i in range(num) { 
+  arrays.push(setmon(answer:answers.at(i),pattern:patterns(pattern).at(i),point:points(pattern).at(i)))
+  }
+  if mode == "array" {
+   return arrays 
+ } else if mode == "" {
+   return box(grid(columns:num,column-gutter: space,..arrays))
+ }
+}
 
 
 ///設問番号の参照
@@ -587,6 +661,8 @@
 #let Q_box = Qbox
 #let choice = choicebox
 #let kuran = setmon
+#let refKN = monref
+
 
 #let sample-exam = {
   [```typst
@@ -687,6 +763,21 @@ $
   
   #setmon(answer:8,point:0,pattern:2)#setmon(answer:1,point:0,pattern:2)
   #setmon(answer:3,point:0,pattern:2)#setmon(answer:9,point:8, pattern:8)
+]
+
+#mondai[まとめて作成
+
+セット問題
+#setmons(answers:(2,3,4),pattern:"set", point:3,space:4pt) 
+順不同
+#setmons(answers:(2,3,4),pattern:"npo", point:2,space:4pt) 
+
+配列として設問を作成
+#let array = setmons(answers:(9,0,3),pattern:"set", point:4,space:4pt,mode:"array")
+
+$
+#array.at(0) = 2 #array.at(1) + 3 #array.at(2)
+$
 ]
 
 ```]
