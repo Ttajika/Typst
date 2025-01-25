@@ -582,6 +582,10 @@
 
 ]}
 
+//旧バージョンとの対応
+#let Q_underline = Qunderline
+#let Q_box = Qbox
+#let choice = choicebox
 #let kuran = setmon
 
 #let sample-exam = {
