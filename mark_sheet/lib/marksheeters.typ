@@ -479,16 +479,26 @@
   mark-shape(text(size:mark-size,top-edge: 0.7em,)[#numbering("1",start + n - 1)])
 }
 
-///複数の設問
+///複数の設問を一括で作成
 ///-> content
 #let setmons(
-              ///設問数
+              ///設問数. `auto`の場合はanswersの数で決まる
               ///-> int|auto
               n:auto,
+              ///正答
+              ///-> array
               answers:(),
+              ///配点
+              ///->int
               point:0,
+              ///採点パターン(通常採点の場合は0 or セット採点の場合は`"set"` or 順不同採点の場合は`"npo"`)
+              ///-> int|str
               pattern:0,
+              ///間の幅
+              ///-> length
               space:0pt,
+              ///そのまま出力する(`""`)，あるいは配列として出力する(`"array"` )
+              ///-> str
               mode:""
               ) = {
   let num = 0
