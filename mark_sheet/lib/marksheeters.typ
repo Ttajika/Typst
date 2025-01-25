@@ -23,7 +23,7 @@
 
 //塗りつぶしの記号//ここを変えれば全部変わる
 #let mark-shape(num, fill:white,col:black) = {
-    return box[
+    return box(baseline: 10%)[
       #ellipse(//楕円を描画
                   width: mark-width, //幅
                   height: mark-height, //高さ
