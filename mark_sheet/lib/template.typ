@@ -82,17 +82,48 @@
           ]
       }
       
-      //解答マークシートを作成
-      #marked-sheet(answers:answers, numbering-style:numbering-style, response:response, ID_num:ID_num, dummy:("A")*ID_num, choice:choice,texts:[*正答マークシート*], N:N)
+      //正答マークシートを作成
+      #marked-sheet(
+        answers:answers,
+        numbering-style:numbering-style, 
+        response:response, 
+        ID_num:ID_num, 
+        dummy:("A")*ID_num, //正答はAを塗りつぶす
+        choice:choice,
+        texts:[*正答マークシート*], 
+        N:N)
       
       //配点マークシートを作成
-      #marked-sheet(answers:points, response:response,dummy:("0")*ID_num, ID_num:ID_num,choice:choice, numbering-style:numbering-style,texts:[ *配点マークシート*  満点: #total-points ], N:N)
+      #marked-sheet(
+        answers:points, 
+        response:response,
+        dummy:("0")*ID_num, 
+        ID_num:ID_num,
+        choice:choice, 
+        numbering-style:numbering-style,
+        texts:[ *配点マークシート*  満点: #total-points ], 
+        N:N)
       
       //採点パターンマークシートを作成
-      #marked-sheet(answers:patterns, response:response, ID_num:ID_num,dummy:("1")*ID_num, choice:choice,numbering-style:numbering-style,texts:[ *採点パターンマークシート* ], N:N)
+      #marked-sheet(
+        answers:patterns, 
+        response:response, 
+        ID_num:ID_num,
+        dummy:("1")*ID_num, 
+        choice:choice,
+        numbering-style:numbering-style,
+        texts:[ *採点パターンマークシート* ], 
+        N:N)
       ]
       
       //空のマークシート（解答用紙）
-      marked-sheet(dummy:("XXX")*ID_num,ID_num:ID_num, choice:choice,numbering-style:numbering-style,texts:[#kaito-title], response:response, N:N)
+      marked-sheet(
+        dummy:("empty")*ID_num,
+        ID_num:ID_num, 
+        choice:choice,
+        numbering-style:numbering-style,
+        texts:[#kaito-title], 
+        response:response, 
+        N:N)
 
 }

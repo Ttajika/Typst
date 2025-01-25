@@ -104,16 +104,16 @@ $
 
 #mondai[まとめて作成
 
-セット問題 #setmons(answers:(2,3,4),pattern:"set", point:3,space:4pt) 
+セット問題 #setmons(answers:(2,3,4),pattern:"set", point:3,space:1em/3) 
 順不同
-#setmons(answers:(2,3,4),pattern:"npo", point:2,space:4pt) 
+#setmons(answers:(2,3,4),pattern:"npo", point:2,space:1em/3) 
 
 
 配列として設問を作成
-#let array = setmons(answers:(9,0,3),pattern:"set", point:4,space:4pt,mode:"array")
+#let array = setmons(answers:(9,0,3),pattern:"set", point:4,mode:"array")
 
 $
-#array.at(0) = 2 #array.at(1) + 3 #array.at(2)
+#array.at(0) = 2 #array.at(1) + 3#array.at(2)
 $
 ]
 #pagebreak()

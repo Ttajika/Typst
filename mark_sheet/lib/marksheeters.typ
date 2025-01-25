@@ -786,7 +786,7 @@ $
 #let array = setmons(answers:(9,0,3),pattern:"set", point:4,space:4pt,mode:"array")
 
 $
-#array.at(0) = 2 #array.at(1) + 3 #array.at(2)
+#array.at(0) = 2 #array.at(1) + 3#array.at(2)
 $
 ]
 
