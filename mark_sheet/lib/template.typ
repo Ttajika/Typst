@@ -3,6 +3,7 @@
 
 //テンプレートの設定
 #let project(
+    title:[],
     N:75, //設問数
     body-font:("Liberation Serif", "Harano Aji Mincho"), //本文フォント
     sans-font:("Liberation Sans", "Harano Aji Gothic"), //セリフなしフォント
@@ -31,7 +32,7 @@
     show raw: set text(font:mono-font) //コード用フォントの設定
     if show-answer {counter("showanswer").update(1)} //解答を見せるモードにするためにカウンターをアップデート
 
-    
+    align(center,text(2em,strong(title)))
 
     //分数の両端にスペースを追加する
     //参照：https://forum.typst.app/t/how-to-redefine-the-default-frac-behavior-while-avoiding-circular-references/2195?u=matunaga_touma
@@ -68,8 +69,9 @@
       #pagebreak() 
       //解答及び配点一覧
       #if show-answers-table or show-points-table {
+        heading(numbering: none)[#kaito-ichiran]
+
         columns(3)[
-          #heading(numbering: none)[#kaito-ichiran]
           #kaitoran(numbering-style:numbering-style,
                     answers, 
                     points, 

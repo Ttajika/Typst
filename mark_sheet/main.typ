@@ -4,14 +4,23 @@
 #import "@preview/cetz:0.3.1" //図を描くためのパッケージ
 #import "@preview/rexllent:0.2.3": xlsx-parser //excelの表を取り込む機能
 
+#let 科目 = {
+  [科目名]
+}
+#let 担当教員 = {
+  [担当教員名]
+}
+
 //以下でマークシート用テンプレートの設定を行う
 #show: project.with(
+  title:[#科目 期末試験 (#担当教員 担当)],
   N:75, //問題数
   body-font:("New Computer Modern", "Harano Aji Mincho"), //本文フォント//フォントを二つ以上指定している場合，左から順に優先度があり，優先度の高いフォントにない文字が次の優先度のフォントで表示されます．
   sans-font:("New Computer Modern Sans", "Harano Aji Gothic"), //強調フォント
   math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
   show-answer:false, //これをtrueにすると解答を問題に出すことができる．
-  kaito-title:[*解答用紙*], //解答用紙のタイトル
+  kaito-title:[#科目　*解答用紙* ], //解答用紙のタイトル
+  kaito-ichiran:[#科目 *正答一覧*],
   show-answers-table:true, //正答一覧の正答を表示
   show-points-table:true, //正答一覧の配点を表示
 )
@@ -22,7 +31,7 @@
 
 #show heading: set text(weight:700 ) //見出しのウェイトを変更
 
-#heading(numbering:none)[サンプル問題[科目名]:期末試験] //見出しを作る/numberingは自動連番の番号の書式設定, noneは番号を出力しない.
+
 
 =
 // = で見出しを表す．== のように重ねるごとに見出しのレベルが下がる
