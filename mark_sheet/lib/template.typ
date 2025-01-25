@@ -1,5 +1,5 @@
 //機能の読み込み
-#import "functions.typ":*
+#import "marksheeters.typ":*
 
 //テンプレートの設定
 #let project(

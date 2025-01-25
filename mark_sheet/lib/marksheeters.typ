@@ -6,19 +6,35 @@
 #let mark-font = ("Noto Sans CJK JP") //設問欄の数字のフォント
 #let mark-size = 8pt //マーク欄の文字のサイズ
 #let mark-height = 10pt //マーク欄の楕円の高さ
-#let mark-widhth = 10pt //マーク欄の楕円の幅
+#let mark-width = 10pt //マーク欄の楕円の幅
 #let mark-weight = 500 //設問欄のフォントのウェイト
 #let ID_num = 7 //学籍番号の桁数
 #let kuran-width = 1.4em //空欄の幅
 //Typstはグローバル変数が基本的に使えないので，カウンターをグローバル変数のように扱う.
 
 //塗りつぶしの色設定
+//-> color
 #let filling(answer, i) = {
     if answer == i {
       return black}
     else {return white}
   }
 
+
+//塗りつぶしの記号//ここを変えれば全部変わる
+#let mark-shape(num, fill:white,col:black) = {
+    return box[
+      #ellipse(//楕円を描画
+                  width: mark-width, //幅
+                  height: mark-height, //高さ
+                  fill: fill, 
+                  stroke:.5pt+col //枠の線幅と色を指定
+                  )[
+                    #align(center+horizon,)[#num]
+                    ]
+      ]
+
+}
 //正答マークシートの塗りつぶし設定（answerと番号が合えば塗りつぶし，そうでなければ番号を出力）
 #let mark_ans(answer, //正答番号
               col:black, //枠の色
@@ -26,16 +42,12 @@
               choice:choice //選択肢数
               ) = {
   for i in range(choice){
-    box[#ellipse(   //楕円を描画
-                  width: mark-widhth, //幅
-                  height: mark-height, //高さ
-                  fill: filling(answer, i), //塗りつぶしパターン，正答と番号が一致すれば黒，そうでなければ白
-                  stroke:.5pt+col //枠の線幅と色を指定
-                  )[
-                    #align(center+horizon,)[
-                      #text(size:size, top-edge: 0.7em, fill: if answer == i {black} else {black})[#i]]
-                      ] 
-                  ]+h(5pt) //次の楕円との間にスペースを開ける
+    mark-shape(
+      text(size:size, top-edge: 0.7em, fill: if answer == i {black} else {black})[#i], 
+      fill:filling(answer, i), //回答とiが一致すれば塗りつぶし
+      col:col
+      )
+    if i< choice - 1 {h(5pt)} //次の楕円との間にスペースを開ける
     }
 }
 
@@ -71,11 +83,17 @@
   for i in range(rnum) {
       IDs.push([#response.at(i)])
       for j in range(num){
-        IDs.push(box[#ellipse(width: mark-widhth, height: mark-height, fill: filling(dummy.at(j), response.at(i)), stroke:.5pt)[#align(center+horizon,)[#text(size:mark-size,top-edge: 0.7em,fill: if dummy.at(j) == response.at(i) {black} else {black},response.at(i))]] ])  
+        IDs.push(
+          mark-shape(
+            text(size:mark-size,top-edge: 0.7em,fill: if dummy.at(j) == response.at(i) {black} else {black},response.at(i)), fill:filling(dummy.at(j), response.at(i))
+            )
+          )  
       }  
   }
   return IDs
 }
+
+
 
 
 
@@ -142,13 +160,14 @@
 }
 
 //問題番号の形の設定
+// 
 #let kuranbox(body,
               width:kuran-width, //空欄の幅
               height: 1.2em, //空欄の高さ
-              stroke:"default",
+              stroke:1pt,
               x:0
               ) = box(
-                    stroke: if stroke == "default"{ (thickness:1pt,dash: if x == 0 {"solid" } else {"dotted"})} else {stroke},
+                    stroke: stroke,
                     width:width,
                     height: height,
                     baseline: 10%)[
@@ -164,21 +183,40 @@
   else if pattern == 1 or pattern == 9 {(paint:green.darken(50%), thickness:2pt  )}
 }
 
-//設問番号の設定
+
+
+
+///設問番号の設定
+///```example
+///#kuran(answer:2, point:4)
+/// ```
+///-> content 
 #let kuran(
-          numbering-style:def-numbering-style, //設問番号のナンバリングの仕方
-          label:none, //設問番号の参照用ラベル
-          answer:none, //正答
-          point:none, //配点
-          font:mark-font, //マーク欄のフォント
-          pattern:0 //採点パターン
+          /// 設問番号のナンバリングの仕方
+          ///-> str
+          numbering-style:def-numbering-style, 
+          /// 設問番号の参照用ラベル
+          ///-> str 
+          label:none, 
+          /// 正答
+          /// -> int 
+          answer:none,
+          ///配点
+          /// -> int
+          point:none, 
+          /// 採点パターン
+          /// -> int
+          pattern:0, 
+          ///マーク欄のフォント
+          /// -> str|array
+          font:mark-font, 
           ) = {
   counter("kuran").step() //設問番号を更新
   context{
     let num = counter("kuran").get().at(0) //現在の設問番号を取得
     let show-answer = counter("showanswer").get().at(0) //解答を表示するかどうかのカウンターを表示 1なら解答表示，0なら非表示.
     //空欄の挿入
-    kuranbox(stroke:if show-answer == 1 {arrange-stroke(pattern)} else {"default"}, width:kuran-width + .7em*show-answer )[
+    kuranbox(stroke:if show-answer == 1 {arrange-stroke(pattern)} else {1pt}, width:kuran-width + .7em*show-answer )[
       #align(if show-answer == 1{ right} else {center}, text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num) ]) //設問番号を挿入
       #let k-set-inpo = (1,2,8,9)
       #let k-set = (2,8)
@@ -203,33 +241,45 @@
   }
   
   if pattern == 9 or pattern == 8 {counter("kuran-set-inpo").step()} //セット問題や順不同問題が閉じられると番号を増やす
-
 }
 
-//解答を表示するときのみ表示するコンテンツ
-#let answer-mode-only(body) = {
+///解答を表示するときのみ表示するコンテンツ
+/// -> content
+#let answer-mode-only(
+  ///本文
+  ///-> content
+  body
+  ) = {
   context{if counter("showanswer").get().at(0) == 1 {block(stroke:red,inset:1pt,body)}}
 }
 
 //解答欄番号を再利用する場合の設定
-#let refku(numbering-style:def-numbering-style, //ナンバリングの仕方
-          label,//参照するラベル
-          font:mark-font //フォント
-          ) = {
-  context{
-    let num = counter("kuran-"+label+"-tx").get().at(0) //ラベルで，そのラベルに代入された番号を取得
-    kuranbox(x:1)[#text(font:mark-font, weight: mark-weight)[#numbering(numbering-style,num)]]
-    }
-}
 
-//正答・配点欄
-#let kaitoran(numbering-style:def-numbering-style,
-              answers, //正答の配列
-              points, //配点の配列
-              patterns, //採点パターンの配列
-              show-answer, //解答を表示するかどうか
-              show-point, //配点を表示するかどうか
-              total-points //合計点
+
+///正答・配点表を作成する
+///-> content
+#let kaitoran(
+              ///正答の配列
+              ///-> array
+              answers,
+              ///配点の配列
+              ///-> array
+              points, 
+              ///採点パターンの配列
+              ///-> array
+              patterns, 
+              ///表に解答を表示するかどうか
+              ///-> bool
+              show-answer,
+              ///配点を表示するかどうか
+              ///-> bool
+              show-point, 
+              ///合計点
+              ///-> int
+              total-points, 
+              /// 設問番号のナンバリング方法
+              ///-> str
+              numbering-style:def-numbering-style,
               ) = {
   context{
     let pattern-search-s = () //順不同 or セット採点始まりの設問番号を配列として取得
@@ -269,15 +319,30 @@
   }
 }
 
-
+//inlineの参照可能なものは作れないので，特別に作る．
 //番号付き下線と番号付き空欄は番号カウンターが共通
 
-//自動連番番号付き下線
-#let Q_underline(label:none,//参照用ラベル
+///自動連番番号付きの下線を引く．
+///
+///`Qbox`, `Qparen`と`Qunderline`は番号が共通である．
+/// -> content
+#let Qunderline(
+                  ///参照用ラベル
+                  ///-> str
+                  label:none,
+                  /// 番号のナンバリング方法
+                  /// -> str
                   numbering-style:"ア",
-                  offset:auto, //下線をベースラインからいくらずらすか
-                  stroke:auto, //線の装飾
-                  body) = {
+                  ///下線をベースラインからいくらずらすかの設定
+                  ///-> auto|length
+                  offset:auto,
+                  ///線の装飾
+                  ///-> auto|length|color|gradient|stroke|pattern|dictionary
+                  stroke:auto, 
+                  ///下線を引かれる文章
+                  ///->content
+                  body
+                  ) = {
   counter("toi").step()
   context{
     text(size:0.7em)[(#numbering(numbering-style,counter("toi").get().at(0)))]+underline(body,offset:offset,stroke:stroke)
@@ -288,13 +353,27 @@
   }
 }
 
-//自動連番番号付き欄
-#let Q_box(label:none, //参照用ラベル
+///自動連番番号付き空欄（ボックス）を作成する．
+///
+///`Qbox`, `Qparen`と`Qunderline`は番号が共通である．
+///-> content
+#let Qbox(
+           ///参照用ラベル
+           ///-> str
+           label:none, 
+           ///空欄の幅
+           ///-> length
+           width:2em,
+           ///囲み線の装飾
+           ///-> auto|length|color|gradient|stroke|pattern|dictionary
+           stroke:0.5pt,
+           ///番号のナンバリング方法
+           ///-> str
            numbering-style:"ア"
            ) = {
   counter("toi").step()
   context[
-    #box(height:12pt,width:15pt, stroke:1pt,baseline: 1pt)[#align(center+horizon)[#text(size:0.8em)[#numbering(numbering-style,counter("toi").get().at(0))]]]
+    #box(height:12pt,width:width, stroke:stroke,baseline: 1pt)[#align(center+horizon)[#text(size:0.8em)[#numbering(numbering-style,counter("toi").get().at(0))]]]
     #if label != none {
         counter("toi"+label).update(counter("toi").get().at(0))
         counter("toi"+label+"kind").update(2) 
@@ -302,8 +381,37 @@
   ]
 }
 
-//下線・欄の参照. 下線か空欄かは自動で判別できるようにする
-#let ref_Q(label,
+
+///自動連番番号付き空欄（カッコ）を作成する．
+///
+///`Qbox`, `Qparen`と`Qunderline`は番号が共通である．
+///-> content
+#let Qparen(
+           ///参照用ラベル
+           ///-> str
+           label:none, 
+           ///空欄の幅
+           ///-> length
+           width:3em,
+           ///番号のナンバリング方法
+           ///-> str
+           numbering-style:"ア"
+           ) = {
+  counter("toi").step()
+  context[（
+    #box(height:12pt,width:width, stroke:0pt,baseline: 1pt)[#align(center+horizon)[#text(size:1em)[#numbering(numbering-style,counter("toi").get().at(0))]]]）
+    #if label != none {
+        counter("toi"+label).update(counter("toi").get().at(0))
+        counter("toi"+label+"kind").update(2) 
+      }
+    ]
+}
+
+
+
+///`Qbox`, ``Qparenと`Qunderline`のラベルを引用できる．
+///下線・欄の参照. 下線か空欄かは自動で判別できるようにする
+#let Qref(label,
           numbering-style:"ア",
           kasen:"下線部",
           kuran:"空欄") = {
@@ -314,28 +422,55 @@
       } 
 }
 
-//選択肢ボックス    
-#let choicebox(candidate, //選択肢ボックスの選択肢の配列
-      row:1, //列数
-      row-size:auto //列のサイズ
+///選択肢ボックスを作成する
+///-> content
+#let choicebox(
+      ///選択肢ボックスの選択肢の配列
+      ///-> array
+      candidate,
+      ///列数
+      ///-> int
+      row:1, 
+      ///縦の大きさ
+      ///-> auto|length
+      row-size:auto 
       ) = {
   let n = candidate.len() //選択肢数を取得
   let col = (14pt, 1fr)*int(n/row)  //列の幅を計算する
   let narray = () 
   for i in range(n) {
-    narray.push(box[#ellipse(width: mark-widhth, height: mark-height, stroke:.5pt)[#align(center+horizon,)[#text(size:mark-size,top-edge: 0.7em,)[#numbering("1",i+1)]]]]) //選択肢番号を出力
+    narray.push(mark-shape(text(size:mark-size,top-edge: 0.7em,)[#numbering("1",i+1)]))
     narray.push(candidate.at(i)) //選択肢を出力
   }
   [#box(stroke:1pt,inset:1em, grid(align:horizon,columns:col,rows:row-size,row-gutter: 1em,..narray))]
 }
+///選択肢の提示：①〜④までみたいなものを作成する
+///-> content
+#let choicelist(
+  ///選択肢の数
+  ///-> int
+  n,
+  ///開始番号
+  ///-> int
+  start:1,
+  ///
+  ///つなぎの記号
+  separator:"〜",
+) = {
+  mark-shape(text(size:mark-size,top-edge: 0.7em,)[#numbering("1",start)])
+  [#separator]
+  mark-shape(text(size:mark-size,top-edge: 0.7em,)[#numbering("1",start + n - 1)])
+}
 
-//設問番号の参照
-#let refKN(label:none, //参照する設問番号のラベル
+
+
+///設問番号の参照
+#let kuref(label:none, //参照する設問番号のラベル
           mode:none, //モード: "f"で最終番号, ""で番号なしの欄を出力
           n:1, //指定した番号を出力
           numbering-style:def-numbering-style, //ナンバリング方法
           at:none, //見出しなどにつけたラベルの時点での最新の設問番号を出力する
-          stroke:"default",
+          stroke:1pt,
           width:kuran-width, //空欄の幅
           add:0, //nやlabelで指定した番号にaddの分だけ数字を足す.
           ) = {
@@ -433,6 +568,10 @@
 
 #let sample-exam = {
   [```typst
+//例
+
+//例
+
 #import "lib/template.typ":* //マークシートのテンプレートを読み込む
 #import "@preview/cetz:0.3.1" //図を描くためのパッケージ
 #import "@preview/rexllent:0.2.3": xlsx-parser //excelの表を取り込む機能
@@ -440,7 +579,7 @@
 //以下でマークシート用テンプレートの設定を行う
 #show: project.with(
   N:75, //問題数
-  body-font:("New Computer Modern", "Harano Aji Mincho"), //本文フォント
+  body-font:("New Computer Modern", "Harano Aji Mincho"), //本文フォント//フォントを二つ以上指定している場合，左から順に優先度があり，優先度の高いフォントにない文字が次の優先度のフォントで表示されます．
   sans-font:("New Computer Modern Sans", "Harano Aji Gothic"), //強調フォント
   math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
   show-answer:false, //これをtrueにすると解答を問題に出すことができる．
@@ -460,10 +599,12 @@
 =
 // = で見出しを表す．== のように重ねるごとに見出しのレベルが下がる
 
-#let sentaku = [最も適当なものを次の 1〜4 の中から選べ．]
+#let sentaku = [最も適当なものを次の#choicelist(4)の中から選べ．]
 // #let命令で関数や変数を作ることができる．よく使う言い回しは変数にしておくと一括で変更するときに楽．
 
-次の #refKN() から #refKN(at:<second>) まで, 最も適当なものを選択肢欄の 1〜4 の中から選べ．
+
+
+次の #kuref() から #kuref(at:<second>) まで, 最も適当なものを選択肢欄の#choicelist(4)の中から選べ．
 
 #mondai[
 #lorem(10)
@@ -477,21 +618,21 @@
 #answer-mode-only[解答を表示するとき専用のメモ．問題には表示できないメモ書きなどに利用]
 
 #mondai[
- #Q_underline(label:"y")[あいうえお]という．そうすると#Q_box(label:"x")は日本国憲法を発布した．
-#ref_Q("y")と#ref_Q("x")について，#sentaku 
+ #Qunderline(label:"y")[あいうえお]という．そうすると#Qbox(label:"x")は日本国憲法を発布した．#Qparen()
+#Qref("y")と#Qref("x")について，#sentaku 
 
 #block[#kuran(answer:1,point:3)#choicebox(row:2,([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
 #lorem(5)
 ]))
 ]]
-//choiceで選択肢欄はrowに数を指定すると行数を変えることができる．
+//choiceboxで選択肢欄はrowに数を指定すると行数を変えることができる．
 
 
 =  <second>
 //headeingにはラベルがつけられる
 
 
-#refKN(at:<second>,add:1) から #refKN(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．ただし #refKN(mode:"")#refKN(mode:"") は二桁の数字を表す．
+#kuref(at:<second>,add:1) から #kuref(mode:"f")までは数学の問題．空欄に入る数字をそのまま答えなさい．ただし #kuref(mode:"")#kuref(mode:"") は二桁の数字を表す．
 //headingにつけるラベルでその位置での最新の問題番号を参照する. 引数addで番号を足す.
 
 
@@ -502,24 +643,44 @@ sum_(x=1)^oo 1/x^2 = pi^#kuran(answer:2,point:0, pattern:2)/#kuran(answer:6, poi
 $
 //セット採点の場合は引数patternを最後以外は2, 最後を8にする．得点は最後以外を0にする
 
-ただし #refku("z") には偶数が入る．//番号を再利用し，それとわかるようにするには`#refku`を用いる．ラベルを用いて参照できる．#refKN("z")ならそのまま再利用．
+ただし #kuref(label:"z",stroke: (dash:"dotted", thickness:.5pt)) には偶数が入る．
 ]
 
 #mondai[
-1〜6 までの数字の中から偶数を３つ選びなさい
+1〜6 までの数字の中から偶数を3つ選びなさい
 
 #kuran(answer:2,pattern:1, point:2) #kuran(answer:4, pattern:1, point:2) #kuran(answer:6, pattern:9, point:2)
 //順不同の場合は引数patternを最後以外を1, 最後を9にする．得点は最後のものが１個あたりの点数として採用される．
 ]
 
 #mondai[
-  #let newul(label:none,body) = Q_underline(label:none,numbering-style:"A",body)
+  #let newul(label:none,body) = Qunderline(label:none,numbering-style:"A",body)
   //#letを使って命令を新しく作ることができます．この場合は番号の書式を変更して，番号付き下線を新しく定義し直しています．
   #newul[２つの二桁の数字を選んでください]. 空欄や下線部に振る数字・文字は変えることができます．
   
   #kuran(answer:8,point:0,pattern:2)#kuran(answer:1,point:0,pattern:2)
   #kuran(answer:3,point:0,pattern:2)#kuran(answer:9,point:8, pattern:8)
 ]
+
+#pagebreak()
+サンプル問題のTypstコード
+
+
+
+
+#sample-exam
+
+
+//本文はここまで
+
+
+#sample-exam
+
+
+//本文はここまで
+
+
+
 
 
 
