@@ -172,7 +172,7 @@
       columns:(23pt,auto), //列の幅：設問番号と解答欄
       stroke: (x,y) => {if y == 0 {(bottom:1pt)} else {1pt}},
       align:center+horizon, 
-      table.header(text(0.4em)[設問\ 番号],[#mark_ans("", col:white, size:12pt,choice:choice)]), //解答マーク欄のヘッダー
+      table.header(text(0.4em)[解答\ 番号],[#mark_ans("", col:white, size:12pt,choice:choice)]), //解答マーク欄のヘッダー
       ..mark_answer(answers, numbering-style:numbering-style, N,choice:choice))]]) //解答マーク欄
 }
 
@@ -767,7 +767,7 @@ $
 ]
 
 #mondai[
-  #let newul(label:none,body) = Qunderline(label:none,numbering-style:"A",body)
+  #let newul(label:none,body) = Qunderline(label:none,numbering-style:"A",body, offset:2pt)
   //#letを使って命令を新しく作ることができます．この場合は番号の書式を変更して，番号付き下線を新しく定義し直しています．
   #newul[２つの二桁の数字を選んでください]. 空欄や下線部に振る数字・文字は変えることができます．
   

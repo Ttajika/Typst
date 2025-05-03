@@ -1,28 +1,32 @@
 //例
 
 #import "lib/template.typ":* //マークシートのテンプレートを読み込む
-#import "@preview/cetz:0.3.1" //図を描くためのパッケージ
+#import "@preview/cetz:0.3.4" //図を描くためのパッケージ
 #import "@preview/rexllent:0.2.3": xlsx-parser //excelの表を取り込む機能
 
-#let 科目 = {
-  [科目名]
+//変数の設定
+#let 科目 = { 
+  [//角カッコは必要
+  科目名 //科目名はここを変更
+  ] 
 }
 #let 担当教員 = {
-  [担当教員名]
+  [担当教員名 //担当教員名はここを変更
+]
 }
 
 //以下でマークシート用テンプレートの設定を行う
 #show: project.with(
   title:[#科目 期末試験 (#担当教員 担当)],
-  N:75, //問題数
+  N:75, //問題数（解答用紙のみに反映される）
   body-font:("New Computer Modern", "Harano Aji Mincho"), //本文フォント//フォントを二つ以上指定している場合，左から順に優先度があり，優先度の高いフォントにない文字が次の優先度のフォントで表示されます．
   sans-font:("New Computer Modern Sans", "Harano Aji Gothic"), //強調フォント
   math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
   show-answer:false, //これをtrueにすると解答を問題に出すことができる．
   kaito-title:[#科目　*解答用紙* ], //解答用紙のタイトル
-  kaito-ichiran:[#科目 *正答一覧*],
-  show-answers-table:true, //正答一覧の正答を表示
-  show-points-table:true, //正答一覧の配点を表示
+  kaito-ichiran:[#科目 *正答一覧*],　//正答一覧のタイトル
+  show-answers-table:true, //trueで正答一覧の正答を表示、falseで非表示
+  show-points-table:false, //trueで正答一覧の配点を表示、falseで非表示
 )
 //本文はここに書く
 
@@ -94,7 +98,7 @@ $
 ]
 
 #mondai[
-  #let newul(label:none,body) = Qunderline(label:none,numbering-style:"A",body)
+  #let newul(label:none,body) = Qunderline(label:none,numbering-style:"A",body,offset:2pt)
   //#letを使って命令を新しく作ることができます．この場合は番号の書式を変更して，番号付き下線を新しく定義し直しています．
   #newul[２つの二桁の数字を選んでください]. 空欄や下線部に振る数字・文字は変えることができます．
   
