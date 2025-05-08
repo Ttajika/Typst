@@ -624,6 +624,35 @@
   counter("kuran").update(0)
 }
 
+//学籍番号欄記入例示用
+#let exstudentID(dummy, //塗りつぶす配列
+               response, //選択肢の配列
+               ID_num:ID_num, //学籍番号の桁数 
+               ) = {
+  let empty_set_array = dummy
+  // for i in range(ID_num ) { //学籍番号記入欄のための配列を作成する
+  //   empty_set_array.push([])
+  // }
+  //以下でマーク欄の表を作成
+
+  
+  return table(
+    columns:ID_num + 1,
+     
+    align:center+horizon,
+    [#hide[#maru]],table.cell(colspan: ID_num   ,stroke:(top:0pt, left:0pt))[記入例],//高さ調整のための空行
+    [],table.cell(colspan: ID_num , align:center+horizon)[学籍番号], //「学籍番号」と表示する行
+    [#hide[x]],..empty_set_array, //記入欄
+    ..IDs(dummy,response, ID_num:ID_num), //マーク欄
+      stroke: (x,y) => {
+        if y == 0 {(top:0pt,left:0pt,bottom:0pt)}
+        else if x == 0 {(left:0pt)}  
+        else if y <= 2 and y>=1 {1pt} else if x == 1 {(left:1pt)} else if x == ID_num {(right:1pt)} else  {(left:.5pt, right:.5pt)} 
+        if y >= response.len()+2 and x>=1 {(bottom:1pt)}  
+      } //枠のルール
+    )
+}
+
 
 #let tutorial ={[
 - これはマークシート式試験のテンプレートです

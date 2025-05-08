@@ -83,3 +83,34 @@ $integral_0^1 x^2 dif x$,
 ]
 
 ]
+
+
+
+
+
+
+#set page(flipped: true)
+= 解答用紙記入上の注意
+
+
+#align(left)[
+※各列で該当する文字・数字の○を黒く塗りつぶしてください。\
+※複数選択は無効になります。]
+
+
+以下は，学籍番号が12KA337の学生が，#kuranbox(1) に 8 を，#kuranbox(2) に 0 を， #kuranbox(3) に 2を解答するケースの記入方法です．
+
+
+
+    #columns(2, gutter:-0pt)[ //マルチコラム. 列の数は解答マーク欄の列数と学籍番号
+    #exstudentID(("1", "2", "K", "A", "3", "3", "7"), //塗りつぶす配列
+               response, //選択肢の配列
+               ID_num:ID_num, //学籍番号の桁数 
+               )//学籍番号マーク等
+    #colbreak()
+    #table(
+      columns:(23pt,auto), //列の幅：設問番号と解答欄
+      stroke: (x,y) => {if y == 0 {(bottom:1pt)} else {1pt}},
+      align:center+horizon, 
+      table.header(text(0.4em)[解答\ 番号],[#mark_ans("", col:white, size:12pt,choice:10)]), //解答マーク欄のヘッダー
+      ..mark_answer((8,0,2), 3, numbering-style:"1", choice:10))]
