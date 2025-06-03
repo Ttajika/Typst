@@ -3,15 +3,16 @@
 #import "lib/template.typ":* //マークシートのテンプレートを読み込む
 #import "@preview/cetz:0.3.4" //図を描くためのパッケージ
 #import "@preview/rexllent:0.2.3": xlsx-parser //excelの表を取り込む機能
+#import "@preview/cjk-unbreak:0.1.0": remove-cjk-break-space
 
 //変数の設定
 #let 科目 = { 
   [//角カッコは必要
-  科目名 //科目名はここを変更
+  経済学 //科目名はここを変更
   ] 
 }
 #let 担当教員 = {
-  [担当教員名 //担当教員名はここを変更
+  [X //担当教員名はここを変更
 ]
 }
 
@@ -23,14 +24,18 @@
   sans-font:("New Computer Modern Sans", "Harano Aji Gothic"), //強調フォント
   math-font:("New computer modern math", "Harano Aji Mincho"), //数式フォント
   show-answer:false, //これをtrueにすると解答を問題に出すことができる．設計ミスを検知するためにお使いください．
-  kaito-title:[#科目　*解答用紙* ], //解答用紙のタイトル
-  kaito-ichiran:[#科目 *正答一覧*],　//正答一覧のタイトル
+  kaito-title:[* #科目 期末試験 *　*解答用紙* ], //解答用紙のタイトル
+  kaito-ichiran:[#科目 期末試験 *正答一覧*],　//正答一覧のタイトル
   show-answers-table:true, //trueで正答一覧の正答を表示、falseで非表示
   show-points-table:true, //trueで正答一覧の配点を表示、falseで非表示
 )
 //本文はここに書く
 
-#set heading(numbering: "大問1.1")
+#show: remove-cjk-break-space //改行時にスペースが入ることを防ぐ．
+
+問題文は適当です．
+
+#set heading(numbering: "問1.1")
 //heading（見出し）の番号付の設定
 
 #show heading: set text(weight:700 ) //見出しのウェイトを変更
@@ -51,24 +56,55 @@
 #lorem(10)
 #sentaku 
 //blockで囲う
-#block(
-  setmon(answer:3,point:2)+choicebox(("アレイ", "牛", "イオン", "たぬき"))
-  )
+#block[
+#setmon(answer:3,point:2)
+#choicebox(("需要関数", "供給関数", "選択関数", "写像"))
 ]
-//引数answerで正答番号，pointで点数を指定する．
+]
+//setmon関数で問題を作成できる.
+//setmon関数の引数answerで正答番号，pointで点数を指定する．
 //choiceで選択肢欄を作ることができる．
 
 #answer-mode-only[解答を表示するとき専用のメモ．問題には表示できないメモ書きなどに利用]
 
 #mondai[
- #Qunderline(label:"y")[あいうえお]という．そうすると#Qbox(label:"x")は日本国憲法を発布した．#Qparen()
-#Qref("y")と#Qref("x")について，#sentaku 
+ #Qunderline(label:"y")[乗数効果]という．これに関してイギリスの経済学者#Qbox(label:"x")は#Qparen(label:"z")を発表した
 
-#block[#setmon(answer:1,point:3)#choicebox(row:2,
-([$x^2$], $integral_0^1 x^2 dif x$, [xx], [
-#lorem(5)])
+ 
+と#Qref("x")について，#sentaku 
+
+#block[
+#Qref("y")について最も適当な数字を選びなさい．  
+  
+#setmon(answer:1,point:3)#choicebox(row:2,
+([10], $integral_0^1 x^2 dif x$, [$2x$], [
+$3/2$])
 )
-]]
+]
+//setmon関数で問題を作成できる.
+//setmon関数の引数answerで正答番号，pointで点数を指定する．
+//choiceで選択肢欄を作ることができる．
+
+#block[
+#Qref("x")について#sentaku 
+  
+#setmon(answer:1,point:3)#choicebox(row:2,
+([J. M. ケインズ], [J. N. ケインズ], [ヒックス], [
+マーシャル])
+)
+]
+
+#block[
+#Qref("z")について#sentaku 
+  
+#setmon(answer:1,point:3)#choicebox(row:2,
+([一般理論], [価値と資本], [価値の理論], [
+社会的選択と個人的評価])
+)
+]
+
+
+]
 //choiceboxで選択肢欄はrowに数を指定すると行数を変えることができる．
 
 
@@ -89,6 +125,8 @@ $
 
 ただし #monref(label:"z",stroke: (dash:"dotted", thickness:.5pt)) には偶数が入る．
 ]
+//setmonの番号はlabelで，monref関数によって参照できる。
+
 
 #mondai[
 1〜6 までの数字の中から偶数を3つ選びなさい
@@ -115,18 +153,17 @@ $
 
 配列として設問を作成
 #let array = setmons(answers:(9,0,3),pattern:"set", point:4,mode:"array")
+//setmonsで問題の配列を作成できる。
 
 $
 #array.at(0) = 2 #array.at(1) + 3#array.at(2)
 $
 ]
-#pagebreak()
-サンプル問題のTypstコード
+//#pagebreak()
 
 
 
 
-#sample-exam
 
 
 //本文はここまで

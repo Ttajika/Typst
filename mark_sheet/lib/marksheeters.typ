@@ -352,7 +352,7 @@
                   numbering-style:"ア",
                   ///下線をベースラインからいくらずらすかの設定
                   ///-> auto|length
-                  offset:auto,
+                  offset:1.5pt,
                   ///線の装飾
                   ///-> auto|length|color|gradient|stroke|pattern|dictionary
                   stroke:auto, 
@@ -603,6 +603,61 @@
   ]]
 }
 
+
+#let setmonR(
+          /// 設問番号のナンバリングの仕方
+          ///-> str
+          numbering-style:def-numbering-style, 
+          /// 設問番号の参照用ラベル
+          ///-> str 
+          label:none, 
+
+          ///配点
+          /// -> int
+          point:none, 
+          /// 採点パターン
+          /// -> int
+          pattern:0, 
+          ///マーク欄のフォント
+          /// -> str|array
+          font:mark-font,
+          ///問題文
+          /// -> content 
+          question:[], 
+          ///正答
+          /// -> content,          
+          ans:[],
+          ///他の選択肢
+          /// -> array,
+          other:(),
+          ///ランダム化のキー 
+          randomize_key:42, 
+          ///列数
+          ///-> int
+          row:1, 
+          ) = {
+block[
+#let n = other.len() + 1
+#import "@preview/suiji:0.4.0": *
+#let rng = gen-rng-f(randomize_key) //ランダム化のための乱数生成器
+
+#let answer = integers(rng, low:0, high:n).at(1)
+
+#let shuffled_other = shuffle(rng, other) //他の選択肢をランダム化
+
+#setmon(numbering-style:numbering-style, label:label, answer:answer+1, point:point, pattern:pattern, font:font)
+#question\
+#let choices = ()
+#for i in range(n) { //選択肢を出力
+  if i == answer { //正答のとき
+    choices.push(ans) //正答を出力
+  } else {
+    choices.push(shuffled_other.at(1).at(i - 1)) //他の選択肢を出力
+  }
+}
+#choicebox(choices, row:row)
+]
+}
 
 #let help = {
   [#heading(numbering: none)[コマンドヘルプ]
