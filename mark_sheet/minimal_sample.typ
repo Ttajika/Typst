@@ -44,9 +44,10 @@
 //choiceで選択肢欄を作ることができる．
 
 #mondai[
-//setmonRを用いると選択肢をランダムにすることができる．ansで正解選択肢を指定，otherでその他の選択肢を指定，そしてquestionで問題文を指定する．rondomize_keyでランダムにする．ここを固定すると正答番号がそのまま固定されるので注意
-#setmonR(ans:[あいうえお], other:([かきくけこ], [さしすせそ], [たちつてと]), point:2, question:[あ行を選びなさい], randomize_key:32) 
+//setmonRを用いると選択肢をランダムにすることができる．ansで正解選択肢を指定，otherでその他の選択肢を指定，そしてquestionで問題文を指定する．rondomize_keyでテキトーに数字を指定しランダムにする．ここを固定すると正答番号や並び順がそのまま固定されるので注意
+#setmonR(ans:[あいうえお], other:([かきくけこ], [さしすせそ], [たちつてと]), point:2, question:[あ行を選びなさい], randomize_key:2 ) 
 ]
+
 
 
 

@@ -647,15 +647,8 @@ block[
 
 #setmon(numbering-style:numbering-style, label:label, answer:answer+1, point:point, pattern:pattern, font:font)
 #question\
-#let choices = ()
-#for i in range(n) { //選択肢を出力
-  if i == answer { //正答のとき
-    choices.push(ans) //正答を出力
-  } else {
-    choices.push(shuffled_other.at(1).at(i - 1)) //他の選択肢を出力
-  }
-}
-#choicebox(choices, row:row)
+#shuffled_other.at(1).insert(answer,ans)
+#choicebox(shuffled_other.at(1), row:row)
 ]
 }
 
