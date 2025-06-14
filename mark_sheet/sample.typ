@@ -120,6 +120,23 @@ $
 #array.at(0) = 2 #array.at(1) + 3#array.at(2)
 $
 ]
+
+
+#pagebreak()
+
+
+#set enum(numbering: "(1)", spacing: 2em)
+
++ 価格は$sfrac(#setmon(answer:1, point:0, pattern:2)#setmon(answer:3, point:0, pattern:2),#setmon(answer:2, point:2, pattern:8))$
+
++ 価格は$sfrac(#setmon(answer:1, point:0, pattern:2)#setmon(answer:3, point:0, pattern:2),#setmon(answer:2, point:2, pattern:8))$
+
+
++ 価格は$(#setmon(answer:1, point:0, pattern:2)#setmon(answer:3, point:0, pattern:2))/#setmon(answer:2, point:2, pattern:8)$
+
+
+
+
 #pagebreak()
 サンプル問題のTypstコード
 

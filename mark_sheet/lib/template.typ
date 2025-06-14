@@ -48,6 +48,8 @@
       }
     }
     //
+     
+
 
     
     //本文
@@ -127,3 +129,7 @@
         N:N)
 
 }
+
+//その他便利機能
+
+#let sfrac(num, den) = {$frac(#box(inset:(bottom:2pt, x:2pt))[$#num$], #box(inset:(top:6pt, x:2pt))[$#den$])$}

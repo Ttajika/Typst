@@ -1,0 +1,13 @@
+[package]
+name = "marksheeter"
+version = "0.1.0"
+entrypoint = "sample.typ"
+categories = [ "utility" ]
+disciplines = [ ]
+description = "A template for creating marksheet exams."
+compiler = "0.13.1"
+
+[template]
+path = "lib"
+entrypoint = "template.typ"
+thumbnail = ""
