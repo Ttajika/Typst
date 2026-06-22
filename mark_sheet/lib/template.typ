@@ -132,4 +132,4 @@
 
 //その他便利機能
 
-#let sfrac(num, den) = {$frac(#box(inset:(bottom:2pt, x:2pt))[$#num$], #box(inset:(top:6pt, x:2pt))[$#den$])$}
+#let sfrac(num, den) = {$frac(#box(inset:(bottom:0.4em, x:2pt))[$#num$], #box(inset:(top:0.4em, x:2pt))[$#den$])$}

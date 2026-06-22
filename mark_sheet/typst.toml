@@ -1,8 +1,8 @@
 [package]
 name = "marksheeter"
-version = "0.1.0"
+version = "0.1.1"
 entrypoint = "sample1.typ"
-categories = [ "utility" ]
+categories = [ "utility", "office" ]
 disciplines = [ ]
 description = "A template for creating marksheet exams."
 compiler = "0.13.1"

@@ -23,7 +23,7 @@
 
 //塗りつぶしの記号//ここを変えれば全部変わる
 #let mark-shape(num, fill:white,col:black) = {
-    return box(baseline: 10%)[
+    return box(baseline: 0%)[
       #ellipse(//楕円を描画
                   width: mark-width, //幅
                   height: mark-height, //高さ
@@ -180,16 +180,17 @@
 // 
 #let kuranbox(body,
               width:kuran-width, //空欄の幅
-              height: 1.2em, //空欄の高さ
+              height: 1.0em, //空欄の高さ
               stroke:1pt,
+              outer-space:0em,
               x:0
-              ) = box(
+              ) = h(outer-space) + box(
                     stroke: stroke,
                     width:width,
                     height: height,
-                    baseline: 10%)[
-                      #align(center+horizon)[#body]
-                      ]
+                    baseline: 0%)[
+                      #align(center+horizon)[#text(size:0.925em)[#body]]
+                      ] + h(outer-space)
 
 
 
@@ -390,7 +391,7 @@
            ) = {
   counter("toi").step()
   context[
-    #box(height:12pt,width:width, stroke:stroke,baseline: 1pt)[#align(center+horizon)[#text(size:0.8em)[#numbering(numbering-style,counter("toi").get().at(0))]]]
+    #box(height:12pt,width:width, stroke:stroke,baseline: 0pt)[#align(center+horizon)[#text(size:0.8em)[#numbering(numbering-style,counter("toi").get().at(0))]]]
     #if label != none {
         counter("toi"+label).update(counter("toi").get().at(0))
         counter("toi"+label+"kind").update(2) 
@@ -474,9 +475,9 @@
   ///つなぎの記号
   separator:"〜",
 ) = {
-  mark-shape(text(size:mark-size,top-edge: 0.7em,)[#numbering("1",start)])
+  mark-shape(text(size:mark-size,)[#numbering("1",start)])
   [#separator]
-  mark-shape(text(size:mark-size,top-edge: 0.7em,)[#numbering("1",start + n - 1)])
+  mark-shape(text(size:mark-size)[#numbering("1",start + n - 1)])
 }
 
 ///複数の設問を一括で作成

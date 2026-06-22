@@ -1,7 +1,7 @@
 //例
 
 #import "lib/template.typ":* //マークシートのテンプレートを読み込む
-#import "@preview/cetz:0.3.4" //図を描くためのパッケージ
+#import "@preview/cetz:0.4.2" //図を描くためのパッケージ
 #import "@preview/rexllent:0.2.3": xlsx-parser //excelの表を取り込む機能
 
 //変数の設定

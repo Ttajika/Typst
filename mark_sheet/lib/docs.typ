@@ -2,6 +2,8 @@
 #import "template.typ":* //マークシートのテンプレートを読み込む
 #import "marksheeters.typ":*
 
+
+
 #set text(font: "Noto Sans CJK JP")
 未完成
 
