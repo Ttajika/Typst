@@ -8,9 +8,6 @@ Typst のマークシートテンプレート（`marksheeters.typ` / `template.t
 | ファイル | 役割 |
 |---|---|
 | `marksheet.html` | **本番用。** ブラウザだけで読み取り・確認・訂正・採点まで完結する単一ファイル |
-| `msread.py` | 同じ処理の Python 実装。**HTML 版の正しさを担保する基準実装**（`selftest.py` が使う） |
-| `selftest.py` | 合成答案による検証。**試験を作ったら印刷前に一度回す** |
-| `layout.sh` | `.typ` から用紙情報 JSON を書き出す（通常は不要、後述） |
 | `lib/marksheeters.typ` `lib/template.typ` | Typst テンプレート（座標・正答のメタデータ出力込み） |
 
 日常の採点で使うのは `marksheet.html` だけで、Python は不要です。
@@ -20,13 +17,12 @@ Typst のマークシートテンプレート（`marksheeters.typ` / `template.t
 
 ## 1. 用紙情報の受け渡し（3形式）
 
-読み取り側（HTML 版・Python 版とも）は次の3つをすべて受け付け、自動判別します。
+読み取り側は次の2つをすべて受け付け、自動判別します。
 
 | 形式 | 作り方 | 使いどころ |
 |---|---|---|
 | **試験 PDF そのもの** | `project` が最終ページに圧縮記述子を印刷する（既定で有効） | **推奨。** typst.app だけで完結する |
 | `layout.json`（raw） | `./layout.sh 期末試験.typ > layout.json` | 用紙情報ページを出したくないとき |
-| `.typ` を直接 | `msread.py --layout 期末試験.typ` | Python 版のみ。内部で `typst query` を呼ぶ |
 
 ### PDF 埋め込みの仕組み
 
