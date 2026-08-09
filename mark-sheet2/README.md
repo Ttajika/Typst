@@ -21,11 +21,6 @@ Typst の `context` 内では `query()` が使えるため、**組版し終え�
 PDF のテキスト抽出は**行の順序を保証しない**ため、`MS|通し番号|断片|` の形式で1行ずつ印刷し、読み取り側で並べ直します。
 
 > **用紙情報ページには正答と配点が印刷されます。** 学生に配るのは解答用紙のページだけにしてください。
-> このページ自体を出したくない場合は `project.with(layout-info: false)` とし、`layout.sh` で JSON を渡します。
-
-> Typst 0.15 で `typst query` は非推奨になりました。`layout.sh` は
-> `typst eval 'query(<markpos>).map(it => it.value)'` を先に試し、使えない環境では従来の
-> `typst query` に落ちるので、どちらのバージョンでも動きます。
 
 ---
 
