@@ -10,8 +10,7 @@ Typst のマークシートテンプレート（`marksheeters.typ` / `template.t
 | `marksheet.html` | **本番用。** ブラウザだけで読み取り・確認・訂正・採点まで完結する単一ファイル |
 | `lib/marksheeters.typ` `lib/template.typ` | Typst テンプレート（座標・正答のメタデータ出力込み） |
 
-日常の採点で使うのは `marksheet.html` だけで、Python は不要です。
-`msread.py` / `selftest.py` は**試験作成時の検証専用**です（採点には使いません）。
+
 
 ---
 
